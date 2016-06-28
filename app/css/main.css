@@ -18,9 +18,8 @@ header {
     background: white;
     padding: 20px;
     margin: 20px 0;
-    border: 2px dashed #666;
-    border-radius: 10px;
     min-height: 205px;
+    box-shadow: 0 0 3px #666,0 10px 6px -6px #666;
 }
 
 .container {
