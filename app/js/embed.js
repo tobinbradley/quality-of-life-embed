@@ -102,7 +102,7 @@ axios.all([
     let jenksBreaks = jenks(jenksData, 5);
 
     // Create map
-    let map = new Map(mapOptions, geojson.data, jenksBreaks, colors.breaks5, selected);
+    let map = new Map(mapOptions, geojson.data, jenksBreaks, colors.breaksGnBu5, selected);
     map.createMap();
 
     // Map title
@@ -131,8 +131,8 @@ axios.all([
     if (config.metricConfig[`m${metricId}`].decimals) {
         dec = config.metricConfig[`m${metricId}`].decimals;
     }
-    for (let i = 0; i < colors.breaks5.length; i++) {
-        document.querySelector(`.legend-rect-${i}`).style.fill = colors.breaks5[i];
+    for (let i = 0; i < colors.breaksGnBu5.length; i++) {
+        document.querySelector(`.legend-rect-${i}`).style.fill = colors.breaksGnBu5[i];
     }
     for (let i = 0; i < jenksBreaks.length; i++) {
         document.querySelector(`.legend-label-${i}`).textContent  = abbrNum(jenksBreaks[i], 2, dec);
