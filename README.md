@@ -7,7 +7,7 @@ This project hasn't yet been deployed to [our public site](http://mcmap.org/qol/
 ``` bash
 git clone https://github.com/tobinbradley/quality-of-life-embed.git
 cd quality-of-life-embed
-git clone https://github.com/tobinbradley/mecklenburg-quality-of-life-data
+git clone https://github.com/tobinbradley/mecklenburg-quality-of-life-data data
 npm run build
 ```
 
