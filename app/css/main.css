@@ -1,0 +1,78 @@
+@import '../../node_modules/normalize.css/normalize.css';
+
+@page {
+    size: 8.5in 11in;
+    margin: 0.75in;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #ccc;
+}
+
+
+header {
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px dashed #666;
+    border-radius: 10px;
+    min-height: 205px;
+}
+
+.container {
+    width: 6.9in;
+    margin: 0 auto;
+}
+
+.embed {
+    height: 9.4in;
+    box-shadow: 0 0 3px #666,0 15px 12px -10px #666;
+    margin: 20px 0;
+}
+
+.embed iframe {
+    overflow: hidden;
+    border: none;
+}
+
+
+.print {
+    display: inline-block;
+    width: 17%;
+    padding: 0 20px;
+}
+
+.form {
+    display: inline-block;
+    width: 83%;
+    float: right;
+    padding: 0 20px;
+    border-left: 1px solid #ccc;
+}
+
+textarea, input {
+    width: 100%;
+    padding: 3px;
+    font-size: 0.8em;
+    border: 1px solid #a2a2a2;
+}
+input {
+    margin-bottom: 5px;
+}
+
+
+@media print {
+    header {
+        display: none;
+    }
+    .embed {
+        margin: 0;
+        box-shadow: none;
+        border: 1px solid black;
+        padding: 10px;
+    }
+}
