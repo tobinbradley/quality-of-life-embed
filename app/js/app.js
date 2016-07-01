@@ -1,3 +1,15 @@
+/*
+____________________________________
+/ The index JS file, using babel and \
+\ browserify.                       /
+------------------------------------
+       \   ^__^
+        \  (oo)\_______
+           (__)\       )\/\
+               ||----w |
+               ||     ||
+*/
+
 import getURLParameter from './modules/geturlparams';
 
 // set defaults
@@ -9,27 +21,24 @@ let t = '';
 let container = document.querySelector("textarea");
 
 
-// get map extent
+// Get URL arguments if passed
+//     b   bounds sw.lng, sw.lat, ne.lng, le.lat
+//     m   metric number
+//     y   year
+//     s   selected
+//     t   map title
 if (getURLParameter('b') !== 'null') {
     b = getURLParameter('b').split(',');
 }
-
-// get variable
 if (getURLParameter('m') !== 'null') {
     m = getURLParameter('m');
 }
-
-// get year
 if (getURLParameter('y') !== 'null') {
     y = getURLParameter('y');
 }
-
-// get selected
 if (getURLParameter('s') !== 'null') {
     s = getURLParameter('s').split(",");
 }
-
-// get title
 if (getURLParameter('t') !== 'null') {
     t = getURLParameter('t');
 }

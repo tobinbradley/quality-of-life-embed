@@ -1,6 +1,6 @@
 /*
 ____________________________________
-/ The main JS file, using babel and \
+/ The embed JS file, using babel and \
 \ browserify.                       /
 ------------------------------------
        \   ^__^
@@ -10,21 +10,18 @@ ____________________________________
                ||     ||
 */
 
-
-// Fix for axios on IE11
-require('es6-promise').polyfill();
-
-//import mapboxgl from 'mapbox-gl';
+require('es6-promise').polyfill();  // fix for Axois on IE11
 import axios from 'axios';
 import getURLParameter from './modules/geturlparams';
 import {getMeta, getData, getGeoJSON} from './modules/fetch';
-import isNumeric from './modules/validate-number';
 import getSubstringIndex from './modules/substring-nth';
 import config from '../../data/config/config';
 import jenks from './modules/jenks';
 import colors from './modules/breaks';
 import abbrNum from './modules/abbreviate-number';
 import Map from './modules/map';
+import geojsonDataMerge from './modules/geojsondatamerge';
+import makeJenksArray from './modules/jenksbreaks';
 
 // set defaults
 let selected = [];
@@ -33,25 +30,24 @@ let year = 2015;
 let mapTitle = '';
 let bounds = [];
 
-
-// get map extent
+// Get URL arguments if passed
+//     b   bounds sw.lng, sw.lat, ne.lng, le.lat
+//     m   metric number
+//     y   year
+//     s   selected
+//     t   map title
 if (getURLParameter('b') !== 'null') {
     bounds = getURLParameter('b').split(',');
 }
-
-// get metric
 if (getURLParameter('m') !== 'null') {
     metricId = getURLParameter('m');
 }
-// get year
 if (getURLParameter('y') !== 'null') {
     year = getURLParameter('y');
 }
-// get selected
 if (getURLParameter('s') !== 'null') {
     selected = getURLParameter('s').split(",");
 }
-// get title
 if (getURLParameter('t') !== 'null') {
     mapTitle = getURLParameter('t');
 }
@@ -60,22 +56,16 @@ if (getURLParameter('t') !== 'null') {
 // set attribution
 document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
 
-// Firefox won't print a GL map unless preserveDrawingBuffer is set to true,
-// so check for Firefox here.
-function fixFirefoxPrint() {
-    return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-}
-
 // map options
 let mapOptions = {
-    container: 'map', // container id
-    style: "./style/style.json", //stylesheet location
+    container: 'map',
+    style: "./style/style.json",
     attributionControl: false,
     zoom: 9.5,
     center: [-80.83062,35.29418],
     maxBounds: [[-78.255, 37.384],[-83.285, 33.180]],
     minZoom: 8,
-    preserveDrawingBuffer: fixFirefoxPrint()
+    preserveDrawingBuffer: navigator.userAgent.toLowerCase().indexOf('firefox') > -1  // fix for Firefox print
 };
 
 
@@ -87,19 +77,12 @@ axios.all([
 ])
 .then(axios.spread(function (meta, data, geojson) {
     // add data to geojson and drop into Jenks array
-    let jenksData = [];
-    for (let i = 0; i < geojson.data.features.length; i++) {
-        if (isNumeric(data.data[geojson.data.features[i].properties.id][`y_${year}`])) {
-            geojson.data.features[i].properties.choropleth = data.data[geojson.data.features[i].properties.id][`y_${year}`];
-            jenksData.push(data.data[geojson.data.features[i].properties.id][`y_${year}`]);
-        } else  {
-            geojson.data.features[i].properties.choropleth = 'null';
-        }
-    }
+    let jenksData = makeJenksArray(data.data, [year]);
     let jenksBreaks = jenks(jenksData, 5);
+    let thegeoJSON = geojsonDataMerge(geojson.data, data.data, year);
 
     // Create map
-    let map = new Map(mapOptions, geojson.data, jenksBreaks, colors.breaksGnBu5, bounds, selected);
+    let map = new Map(mapOptions, thegeoJSON, jenksBreaks, colors.breaksGnBu5, bounds, selected);
     map.createMap();
 
     // Map title
