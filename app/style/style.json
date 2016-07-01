@@ -517,7 +517,7 @@
             "source": "mapbox",
             "id": "tunnel_motorway_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-dasharray": [
                     0.5,
                     0.25
@@ -623,7 +623,7 @@
             "source": "mapbox",
             "id": "tunnel_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -738,7 +738,7 @@
             "source": "mapbox",
             "id": "tunnel_secondary_tertiary_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -782,7 +782,7 @@
             "source": "mapbox",
             "id": "tunnel_trunk_primary_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -833,7 +833,7 @@
             "source": "mapbox",
             "id": "tunnel_motorway_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-dasharray": [
                     0.5,
                     0.25
@@ -1223,7 +1223,7 @@
             "source": "mapbox",
             "id": "road_motorway_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -1327,7 +1327,7 @@
             "source": "mapbox",
             "id": "road_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -1456,7 +1456,7 @@
             "id": "road_secondary_tertiary_casing",
             "minzoom": 12,
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -1504,7 +1504,7 @@
             "id": "road_trunk_primary_casing",
             "minzoom": 10,
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -1559,7 +1559,7 @@
             "source": "mapbox",
             "id": "road_motorway_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -1943,7 +1943,7 @@
             "source": "mapbox",
             "id": "bridge_motorway_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -2041,7 +2041,7 @@
             "source": "mapbox",
             "id": "bridge_link_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -2156,7 +2156,7 @@
             "source": "mapbox",
             "id": "bridge_secondary_tertiary_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -2200,7 +2200,7 @@
             "source": "mapbox",
             "id": "bridge_trunk_primary_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [
@@ -2250,7 +2250,7 @@
             "source": "mapbox",
             "id": "bridge_motorway_casing",
             "paint": {
-                "line-color": "#e9ac77",
+                "line-color": "#ffa159",
                 "line-width": {
                     "base": 1.2,
                     "stops": [

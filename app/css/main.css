@@ -1,3 +1,15 @@
+/*
+____________________________________
+/ CSS file for print/embed index,  \
+\ using PostCSS                    /
+------------------------------------
+       \   ^__^
+        \  (oo)\_______
+           (__)\       )\/\
+               ||----w |
+               ||     ||
+*/
+
 @import '../../node_modules/normalize.css/normalize.css';
 
 @page {
@@ -18,7 +30,7 @@ header {
     background: white;
     padding: 20px;
     margin: 20px 0;
-    min-height: 205px;
+    min-height: 175px;
     box-shadow: 0 0 3px #666,0 10px 6px -6px #666;
 }
 

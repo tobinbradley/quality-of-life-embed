@@ -27,21 +27,18 @@ import abbrNum from './modules/abbreviate-number';
 import Map from './modules/map';
 
 // set defaults
-let mapCenter = [-80.8044, 35.2585];
-let mapZoom = 9;
 let selected = [];
 let metricId = 6;
 let year = 2015;
 let mapTitle = '';
+let bounds = [];
 
 
 // get map extent
-if (getURLParameter('c') !== 'null') {
-    mapCenter = getURLParameter('c').split(',');
+if (getURLParameter('b') !== 'null') {
+    bounds = getURLParameter('b').split(',');
 }
-if (getURLParameter('z') !== 'null') {
-    mapZoom = getURLParameter('z');
-}
+
 // get metric
 if (getURLParameter('m') !== 'null') {
     metricId = getURLParameter('m');
@@ -61,7 +58,7 @@ if (getURLParameter('t') !== 'null') {
 
 
 // set attribution
-document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}`;
+document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
 
 // Firefox won't print a GL map unless preserveDrawingBuffer is set to true,
 // so check for Firefox here.
@@ -74,10 +71,10 @@ let mapOptions = {
     container: 'map', // container id
     style: "./style/style.json", //stylesheet location
     attributionControl: false,
-    zoom: mapZoom,
-    center: mapCenter,
+    zoom: 9.5,
+    center: [-80.83062,35.29418],
     maxBounds: [[-78.255, 37.384],[-83.285, 33.180]],
-    minZoom: 7,
+    minZoom: 8,
     preserveDrawingBuffer: fixFirefoxPrint()
 };
 
@@ -102,7 +99,7 @@ axios.all([
     let jenksBreaks = jenks(jenksData, 5);
 
     // Create map
-    let map = new Map(mapOptions, geojson.data, jenksBreaks, colors.breaksGnBu5, selected);
+    let map = new Map(mapOptions, geojson.data, jenksBreaks, colors.breaksGnBu5, bounds, selected);
     map.createMap();
 
     // Map title
@@ -134,7 +131,7 @@ axios.all([
     for (let i = 0; i < colors.breaksGnBu5.length; i++) {
         document.querySelector(`.legend-rect-${i}`).style.fill = colors.breaksGnBu5[i];
     }
-    for (let i = 0; i < jenksBreaks.length; i++) {
+    for (let i = 0; i < jenksBreaks.length - 1; i++) {
         document.querySelector(`.legend-label-${i}`).textContent  = abbrNum(jenksBreaks[i], 2, dec);
     }
 

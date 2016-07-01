@@ -1,12 +1,13 @@
 import mapboxgl from 'mapbox-gl';
 
 let Map = class {
-    constructor(mapOptions, geoJSON, breaks, colors, selected = []) {
+    constructor(mapOptions, geoJSON, breaks, colors, bounds = [], selected = []) {
         this.mapOptions = mapOptions;
         this.geoJSON = geoJSON;
         this.breaks = breaks;
         this.colors = colors;
         this.selected = selected;
+        this.bounds = bounds;
     }
 
     // initialize the map
@@ -14,16 +15,24 @@ let Map = class {
         this.map = new mapboxgl.Map(this.mapOptions);
         let map = this.map;
         let component = this;
-        map.on('moveend', function() {
-            let center = map.getCenter();
-            if (window!=window.top) {
-                parent.postMessage({"mapzoom": map.getZoom(), "mapcenter": [center.lng, center.lat]},"*");
-            }
-        });
+        let bounds = this.bounds;
+
+        // send new bounds to parent on move end
+        if (window!=window.top) {
+            map.on('moveend', function() {
+                let bounds = map.getBounds();
+                parent.postMessage({"bounds": `${bounds._sw.lng.toFixed(4)},${bounds._sw.lat.toFixed(4)},${bounds._ne.lng.toFixed(4)},${bounds._ne.lat.toFixed(4)}`},"*");
+            });
+        }
+
+        // after map initiated, intiate and style neighborhoods and zoom to bounds
         map.on('load', function () {
             component.neighborhoodInit();
             component.neighborhoodStyle();
             component.neighborhoodSelected();
+            if (bounds.length === 4) {
+                map.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]]);
+            }
         });
     }
 
@@ -43,8 +52,8 @@ let Map = class {
             'source': 'neighborhoods',
             'layout': {},
             'paint': {
-                'line-color': '#cccccc',
-                'line-width': 0.5
+                'line-color': '#ffffff',
+                'line-width': 0.6
             }
         }, 'building');
 
@@ -55,10 +64,26 @@ let Map = class {
             'layout': {},
             "filter": ["in", "id", "-999999"],
             'paint': {
-                'line-color': '#FFA400',
-                'line-width': 5
+                'line-color': '#ba00e4',
+                'line-width': {
+                    "base": 2,
+                    "stops": [
+                        [
+                            7,
+                            2
+                        ],
+                        [
+                            13,
+                            5
+                        ],
+                        [
+                            16,
+                            8
+                        ]
+                    ]
+                }
             }
-        }, 'building');
+        }, 'water_label');
 
         map.addLayer({
             'id': 'neighborhoods-fill',

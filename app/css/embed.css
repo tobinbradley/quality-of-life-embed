@@ -1,7 +1,6 @@
 /*
 ____________________________________
-/ The main CSS file, using PostCSS and \
-\ CSSNext.                             /
+/ Embed CSS file, using PostCSS     \
 ------------------------------------
        \   ^__^
         \  (oo)\_______
@@ -51,6 +50,9 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 5px;
     right: 5px;
     font-size: 0.8em;
+    text-align: right;
+    padding: 3px;
+    background: rgba(255,255,255,0.7);
 }
 
 .toc {
@@ -59,9 +61,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 10px;
     width: 260px;
     background: white;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
-    border: 1px solid #ccc;
-    border-bottom: none;
+    box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
 }
 
 .title, .description, .legend {
@@ -70,12 +70,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title {
-    padding: 20px 15px 10px 15px;
-    border-bottom: 1px solid rgba(0,0,0,0.10);
+    padding: 20px 10px 15px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
 }
 
 .description {
-    padding: 10px 15px 20px 15px;
+    padding: 10px 10px 15px 10px;
+    font-size: 11px;
 }
 
 h3 {
@@ -87,6 +88,7 @@ h3 {
 h4 {
     font-size: 12px;
 }
+
 h4 p {
     margin: 0;
 }
@@ -98,10 +100,9 @@ h4 p {
 
 @media print{
     .background-print-img{
-        background:red;
         display: block;
         width:100%;
-        height: 99%;
+        height: 100%;
         position:absolute;
         left: 0;
         top: 0;
@@ -109,8 +110,5 @@ h4 p {
     }
     #map {
         border: 1px solid black;
-    }
-    .toc {
-        box-shadow: none;
     }
 }

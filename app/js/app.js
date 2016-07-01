@@ -1,12 +1,7 @@
 import getURLParameter from './modules/geturlparams';
 
-
-// set embed values
-// need metric(m), zoom(z), center(c), year(y), selected(s)
-
 // set defaults
-let c = [-80.8044, 35.2585];
-let z = 9.5;
+let b = [];
 let s = [];
 let m = 6;
 let y = 2015;
@@ -15,11 +10,8 @@ let container = document.querySelector("textarea");
 
 
 // get map extent
-if (getURLParameter('c') !== 'null') {
-    c = getURLParameter('c').split(',');
-}
-if (getURLParameter('z') !== 'null') {
-    z = getURLParameter('z');
+if (getURLParameter('b') !== 'null') {
+    b = getURLParameter('b').split(',');
 }
 
 // get variable
@@ -43,11 +35,11 @@ if (getURLParameter('t') !== 'null') {
 }
 
 // set iframe src
-document.querySelector('.embed iframe').src = setURL(m, y, c, z, s, t);
-setEmbed(setURL(m, y, c, z, s, t), container);
+document.querySelector('.embed iframe').src = setURL(m, y, b, s, t);
+setEmbed(setURL(m, y, b, s, t), container);
 
-function setURL(m, y, c, z, s, t) {
-    let url = `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&c=${c}&z=${z}&s=${s}&t=${encodeURI(t)}`;
+function setURL(m, y, b, s, t) {
+    let url = `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&b=${b}&s=${s}&t=${encodeURI(t)}`;
     return url;
 }
 
@@ -58,22 +50,19 @@ function setEmbed(url, con) {
 window.titleChange = function (title) {
     t = title;
     document.querySelector("iframe").contentWindow.postMessage(t, '*');
-    setEmbed(setURL(m, y, c, z, s, t), container);
+    setEmbed(setURL(m, y, b, s, t), container);
 };
 
 
 
 window.onmessage = function(e){
     let data = e.data;
-    if (data.mapzoom) {
-        z = data.mapZoom;
-    }
-    if (data.mapcenter) {
-        c = data.mapcenter.join(",");
+    if (data.bounds) {
+        b = data.bounds;
     }
     if (data.maptitle) {
         t = data.maptitle;
         document.querySelector("#maptitle").value = t;
     }
-    setEmbed(setURL(m, y, c, z, s, t), container);
+    setEmbed(setURL(m, y, b, s, t), container);
 };
