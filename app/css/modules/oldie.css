@@ -1,0 +1,13 @@
+/* message for no WebGL Support */
+.oldie {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 10px;
+    background: yellow;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+}

@@ -36,6 +36,19 @@ window.onmessage = function(e){
     document.querySelector('.title').innerHTML = e.data;
 };
 
+// Make sure WebGL is in da house
+try {
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+}
+catch (e) {
+    let el = document.querySelector('body');
+    let elChild = document.createElement('div');
+    elChild.classList.add('oldie');
+    elChild.innerHTML = 'You are using an outdated browser. <a href="http://whatbrowser.org/" target="_blank">Upgrade your browser today</a> to better experience this site.';
+    el.insertBefore(elChild, el.firstChild);
+}
+
 // Get URL arguments if passed
 //     b   bounds sw.lng, sw.lat, ne.lng, le.lat
 //     m   metric number

@@ -46,6 +46,7 @@ let Map = class {
             'data': geoJSON
         });
 
+        // neighborhood boundaries
         map.addLayer({
             'id': 'neighborhoods-line',
             'type': 'line',
@@ -53,10 +54,11 @@ let Map = class {
             'layout': {},
             'paint': {
                 'line-color': '#ffffff',
-                'line-width': 0.6
+                'line-width': 0.8
             }
         }, 'building');
 
+        // neighborhood boundaries highlight
         map.addLayer({
             'id': 'neighborhoods-line-selected',
             'type': 'line',
@@ -85,6 +87,7 @@ let Map = class {
             }
         }, 'water_label');
 
+        // neighborhoods choropleth
         map.addLayer({
             'id': 'neighborhoods-fill',
             'type': 'fill',
@@ -95,6 +98,7 @@ let Map = class {
                 'fill-opacity': 1
             }
         }, 'neighborhoods-line');
+
     }
 
     // filter the neighborhood line highlights
