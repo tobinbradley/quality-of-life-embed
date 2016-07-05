@@ -22,7 +22,7 @@ var postcss = require("gulp-postcss"),
 
 // meta tasks
 gulp.task('default', ['watch', 'browser-sync']);
-gulp.task('build', ['css', 'js-app', 'js-embed', 'replace', 'imagemin', 'move']);
+gulp.task('build', ['css', 'js-app', 'replace', 'imagemin', 'move']);
 gulp.task('datagen', ['clean', 'markdown', 'convert', 'transform']);
 
 // return true if convertable to number
@@ -63,7 +63,7 @@ gulp.task('browser-sync', function() {
 gulp.task('watch', function () {
     gulp.watch(['./app/*.html'], ['replace']);
     gulp.watch(['./app/css/**/*.css'], ['css']);
-    gulp.watch(['./app/js/**/*.js'], ['js-app', 'js-embed']);
+    gulp.watch(['./app/js/**/*.js'], ['js-app']);
     gulp.watch('./app/img/**/*', ['imagemin']);
 });
 
@@ -92,35 +92,21 @@ gulp.task('move', function() {
 
 // JavaScript
 gulp.task('js-app', function () {
-    var b = browserify({
-        entries: ['./app/js/app.js'],
-        debug: true,
-        transform: [babelify.configure({'only': './app/js/', presets: ["es2015"]})]
+    _.each(['app.js', 'embed.js'], function(file) {
+        var b = browserify({
+            entries: [`./app/js/${file}`],
+            debug: true,
+            transform: [babelify.configure({'only': './app/js/', presets: ["es2015"]})]
+        });
+        b.bundle()
+            .pipe(source(file))
+            .pipe(buffer())
+            .pipe(sourcemaps.init({loadMaps: true}))
+            .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
+            .on('error', gutil.log)
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest('./public/js/'));
     });
-    return b.bundle()
-        .pipe(source('app.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
-        .on('error', gutil.log)
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./public/js/'));
-});
-gulp.task('js-embed', function () {
-    var b = browserify({
-        entries: ['./app/js/embed.js'],
-        debug: true,
-        transform: [babelify.configure({'only': './app/js/', presets: ["es2015"]})]
-    });
-
-    return b.bundle()
-        .pipe(source('embed.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
-        .on('error', gutil.log)
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./public/js/'));
 });
 
 // CSS
