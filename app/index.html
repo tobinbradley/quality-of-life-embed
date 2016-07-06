@@ -36,18 +36,18 @@
         <header>
             <div class="print">
                 <h3>Print</h3>
-                <button onclick="window.print();"><img src="img/ic_print_48px.svg" style="width: 48px; height: 48px" alt=""></button>
+                <button onclick="window.print();"><img src="img/ic_print_48px.svg" style="width: 48px; height: 48px" alt="print button"></button>
             </div>
 
             <div class="form ">
                 <h3>Embed</h3>
-				<input type="text" value="" id="maptitle" oninput="titleChange(this.value)" maxlength="150">
-                <textarea name="name" rows="3" onclick="this.select()"></textarea>
+				<input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
+                <textarea name="embedCode" rows="3" onclick="this.select()" aria-label="embed iframe code"></textarea>
             </div>
             <div style="clear:both"></div>
         </header>
         <div class="embed">
-            <iframe src="" width="100%" height="100%"></iframe>
+            <iframe src="" width="100%" height="100%" title="map"></iframe>
         </div>
     </div>
 
