@@ -27,19 +27,19 @@ let container = document.querySelector("textarea");
 //     y   year
 //     s   selected
 //     t   map title
-if (getURLParameter('b') !== 'null') {
+if (getURLParameter('b') !== null) {
     b = getURLParameter('b').split(',');
 }
-if (getURLParameter('m') !== 'null') {
+if (getURLParameter('m') !== null) {
     m = getURLParameter('m');
 }
-if (getURLParameter('y') !== 'null') {
+if (getURLParameter('y') !== null) {
     y = getURLParameter('y');
 }
-if (getURLParameter('s') !== 'null') {
+if (getURLParameter('s') !== null) {
     s = getURLParameter('s').split(",");
 }
-if (getURLParameter('t') !== 'null') {
+if (getURLParameter('t') !== null) {
     t = getURLParameter('t');
 }
 
@@ -47,23 +47,23 @@ if (getURLParameter('t') !== 'null') {
 document.querySelector('.embed iframe').src = setURL(m, y, b, s, t);
 setEmbed(setURL(m, y, b, s, t), container);
 
+// URL for the iframe
 function setURL(m, y, b, s, t) {
     let url = `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&b=${b}&s=${s}&t=${encodeURI(t)}`;
     return url;
 }
 
+// iframe tag for copying by user
 function setEmbed(url, con) {
     con.value = `<iframe src="${url}" width="500px" height="600px"></iframe>`;
 }
 
+// parent/iframe communications
 window.titleChange = function (title) {
     t = title;
-    document.querySelector("iframe").contentWindow.postMessage(t, '*');
+    document.querySelector("iframe").contentWindow.postMessage({"title": t}, '*');
     setEmbed(setURL(m, y, b, s, t), container);
 };
-
-
-
 window.onmessage = function(e){
     let data = e.data;
     if (data.bounds) {

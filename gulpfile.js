@@ -8,6 +8,7 @@ var postcss = require("gulp-postcss"),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     babelify = require('babelify'),
+    vueify = require('vueify'),
     uglify = require('gulp-uglify'),
     nano = require('gulp-cssnano'),
     swig  = require('gulp-swig'),
@@ -63,7 +64,7 @@ gulp.task('browser-sync', function() {
 gulp.task('watch', function () {
     gulp.watch(['./app/*.html'], ['replace']);
     gulp.watch(['./app/css/**/*.css'], ['css']);
-    gulp.watch(['./app/js/**/*.js'], ['js-app']);
+    gulp.watch(['./app/js/**/*.js', './app/js/**/*.vue'], ['js-app']);
     gulp.watch('./app/img/**/*', ['imagemin']);
 });
 
@@ -92,20 +93,19 @@ gulp.task('move', function() {
 
 // JavaScript
 gulp.task('js-app', function () {
-    _.each(['app.js', 'embed.js'], function(file) {
-        var b = browserify({
-            entries: [`./app/js/${file}`],
-            debug: true,
-            transform: [babelify.configure({'only': './app/js/', presets: ["es2015"]})]
-        });
-        b.bundle()
-            .pipe(source(file))
-            .pipe(buffer())
-            .pipe(sourcemaps.init({loadMaps: true}))
-            .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
-            .on('error', gutil.log)
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest('./public/js/'));
+    //_.each(['app.js', 'embed.js'], function(file) {
+    _.each(['embed.js'], function(file) {
+        browserify(`./app/js/${file}`)
+              .transform(vueify)
+              .transform(babelify)
+              .bundle()
+              .pipe(source(file))
+              .pipe(buffer())
+              .pipe(sourcemaps.init({loadMaps: true}))
+              .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
+              .on('error', gutil.log)
+              .pipe(sourcemaps.write('./'))
+              .pipe(gulp.dest('./public/js/'));
     });
 });
 
@@ -200,6 +200,7 @@ gulp.task('transform', ['clean', 'convert'], function(cb) {
         }
     });
     del(['./tmp/**']);
+    cb();
 });
 
 // markdown conversion

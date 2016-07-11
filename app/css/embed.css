@@ -21,12 +21,6 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-
-h1, h2, h3, h4, h5, h6 {
-    font-weight: normal;
-    margin: 0;
-}
-
 .container {
     position: absolute;
     top: 0;
@@ -41,18 +35,6 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #ccc;
 }
 
-#maplegend {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 27px;
-}
-
-#maplegend rect {
-    stroke-width: 2;
-    fill: white;
-}
-
 .attribution {
     position: absolute;
     bottom: 5px;
@@ -61,45 +43,6 @@ h1, h2, h3, h4, h5, h6 {
     text-align: right;
     padding: 3px;
     background: rgba(255,255,255,0.7);
-}
-
-.toc {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 260px;
-    background: white;
-    box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
-}
-
-.title, .description, .legend {
-    position: relative;
-    z-index: 10;
-}
-
-.title {
-    padding: 20px 10px 15px 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-    word-wrap: break-word;
-}
-
-.description {
-    padding: 10px 10px 15px 10px;
-    font-size: 12px;
-}
-
-h3 {
-    font-size: 15px;
-    font-weight: bold;
-    line-height: 20px;
-}
-
-h4 {
-    font-size: 12px;
-}
-
-h4 p {
-    margin: 0;
 }
 
 .background-print-img{

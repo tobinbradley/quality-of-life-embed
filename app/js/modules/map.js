@@ -27,9 +27,9 @@ let Map = class {
 
         // after map initiated, intiate and style neighborhoods and zoom to bounds
         map.on('load', function () {
-            component.neighborhoodInit();
-            component.neighborhoodStyle();
-            component.neighborhoodSelected();
+            component.neighborhoodInit(component.geoJSON);
+            component.neighborhoodStyle(component.breaks, component.colors);
+            component.neighborhoodSelected(component.selected);
             if (bounds.length === 4) {
                 map.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]]);
             }
@@ -37,14 +37,16 @@ let Map = class {
     }
 
     // create neighborhood layers (choropleth, regular outline, highlight outline)
-    neighborhoodInit() {
+    neighborhoodInit(geoJSON) {
         let map = this.map;
-        let geoJSON = this.geoJSON;
 
-        this.choroplethSource = map.addSource('neighborhoods', {
-            'type': 'geojson',
-            'data': geoJSON
+        this.choroplethSource = new mapboxgl.GeoJSONSource({
+            data: geoJSON
         });
+
+        let choroplethSource = this.choroplethSource;
+
+        map.addSource('neighborhoods', choroplethSource);
 
         // neighborhood boundaries
         map.addLayer({
@@ -102,9 +104,8 @@ let Map = class {
     }
 
     // filter the neighborhood line highlights
-    neighborhoodSelected() {
+    neighborhoodSelected(selected) {
         let map = this.map;
-        let selected = this.selected;
         let filter;
 
         if (selected.length > 0) {
@@ -120,9 +121,7 @@ let Map = class {
     }
 
     // style the neighborhood polygons
-    neighborhoodStyle() {
-        let breaks = this.breaks;
-        let colors = this.colors;
+    neighborhoodStyle(breaks, colors) {
         let map = this.map;
         let fillColor = {
             property: 'choropleth',
@@ -135,6 +134,13 @@ let Map = class {
             ]
         };
         map.setPaintProperty("neighborhoods-fill", 'fill-color', fillColor);
+    }
+
+    // change the mapped data
+    updateChrolopleth(geoJSON, breaks) {
+        this.choroplethSource.setData(geoJSON);
+        this.neighborhoodStyle(breaks, this.colors);
+        this.neighborhoodSelected(this.selected);
     }
 
 };
