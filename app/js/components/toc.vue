@@ -66,26 +66,26 @@
         		<title id="svgTitle">Choropleth legend</title>
                 <g transform="translate(20.714293 -865.93365)">
                     <rect y="865.9" x="-20.7" height="25" width="50" v-bind:style="{fill: color[0]}"/>
-                  <rect width="50" height="25" x="28.9" y="865.9" v-bind:style="{fill: color[1]}"/>
-                  <rect width="50" height="25" x="78.5" y="865.9" v-bind:style="{fill: color[2]}"/>
-                  <rect y="865.9" x="128.1" height="25" width="50" v-bind:style="{fill: color[3]}"/>
-                  <rect width="50" height="25" x="177.6" y="865.9" v-bind:style="{fill: color[4]}"/>
-                  <text x="-19.5" y="882.9" class="legendText" preserveAspectRatio="xMidYMax meet">
-                    <tspan x="-19.5" y="882.9">{{breaks[0] | abbrNumber sigfigs}}</tspan>
-                  </text>
-                  <text y="882.9" x="29.2" class="legendText">
-                    <tspan y="882.9" x="29.2">{{breaks[1] | abbrNumber sigfigs}}</tspan>
-                  </text>
-                  <text x="79.5" y="882.9" class="legendText">
-                    <tspan x="79.5" y="882.9">{{breaks[2] | abbrNumber sigfigs}}</tspan>
-                  </text>
-                  <text y="882.9" x="129.1" class="legendText" style="fill:#f9f9f9;">
-                    <tspan y="882.9" x="129.1">{{breaks[3] | abbrNumber sigfigs}}</tspan>
-                  </text>
-                  <text x="179.2" y="882.9" class="legendText" style="fill:#f9f9f9;">
-                    <tspan x="179.2" y="882.9">{{breaks[4] | abbrNumber sigfigs}}</tspan>
-                  </text>
-            </g>
+                    <rect width="50" height="25" x="28.9" y="865.9" v-bind:style="{fill: color[1]}"/>
+                    <rect width="50" height="25" x="78.5" y="865.9" v-bind:style="{fill: color[2]}"/>
+                    <rect y="865.9" x="128.1" height="25" width="50" v-bind:style="{fill: color[3]}"/>
+                    <rect width="50" height="25" x="177.6" y="865.9" v-bind:style="{fill: color[4]}"/>
+                    <text x="-19.5" y="882.9" class="legendText" preserveAspectRatio="xMidYMax meet">
+                        <tspan x="-19.5" y="882.9">{{breaks[0] | abbrNumber sigfigs}}</tspan>
+                    </text>
+                    <text y="882.9" x="29.2" class="legendText">
+                        <tspan y="882.9" x="29.2">{{breaks[1] | abbrNumber sigfigs}}</tspan>
+                    </text>
+                    <text x="79.5" y="882.9" class="legendText">
+                        <tspan x="79.5" y="882.9">{{breaks[2] | abbrNumber sigfigs}}</tspan>
+                    </text>
+                    <text y="882.9" x="129.1" class="legendText" style="fill:#f9f9f9;">
+                        <tspan y="882.9" x="129.1">{{breaks[3] | abbrNumber sigfigs}}</tspan>
+                    </text>
+                    <text x="179.2" y="882.9" class="legendText" style="fill:#f9f9f9;">
+                        <tspan x="179.2" y="882.9">{{breaks[4] | abbrNumber sigfigs}}</tspan>
+                    </text>
+               </g>
           </svg>
         </div>
     </div>

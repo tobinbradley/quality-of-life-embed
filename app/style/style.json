@@ -414,9 +414,8 @@
         {
             "id": "building",
             "type": "fill",
-            "source": "mapbox",
-            "minzoom": 14,
-            "source-layer": "building",
+            "source": "parcels",
+            "source-layer": "buildings",
             "paint": {
                 "fill-color": {
                     "base": 1,
@@ -472,67 +471,6 @@
                 "fill-outline-color": "#dfdbd7"
             },
             "ref": "building"
-        },
-        {
-            "id": "buildingmeck",
-            "type": "fill",
-            "source": "parcels",
-            "source-layer": "buildings",
-            "paint": {
-                "fill-color": {
-                    "base": 1,
-                    "stops": [
-                        [
-                            15.5,
-                            "#f2eae2"
-                        ],
-                        [
-                            16,
-                            "#dfdbd7"
-                        ]
-                    ]
-                }
-            }
-        },
-        {
-            "id": "building_top_meck",
-            "paint": {
-                "fill-color": "#f2eae2",
-                "fill-opacity": {
-                    "base": 1,
-                    "stops": [
-                        [
-                            15,
-                            0
-                        ],
-                        [
-                            16,
-                            1
-                        ]
-                    ]
-                },
-                "fill-translate": {
-                    "stops": [
-                        [
-                            15,
-                            [
-                                0,
-                                0
-                            ]
-                        ],
-                        [
-                            16,
-                            [
-                                -2,
-                                -2
-                            ]
-                        ]
-                    ],
-                    "base": 1
-                },
-                "fill-outline-color": "#dfdbd7"
-            },
-            "ref": "buildingmeck"
         },
         {
             "interactive": true,
