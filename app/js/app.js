@@ -55,7 +55,7 @@ function setURL(m, y, b, s, t) {
 
 // iframe tag for copying by user
 function setEmbed(url, con) {
-    con.value = `<iframe src="${url}" width="500px" height="600px"></iframe>`;
+    con.value = `<iframe src="${url}" style="width: 500px; height: 500px; border: 1px solid #595959"></iframe>`;
 }
 
 // parent/iframe communications
