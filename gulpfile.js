@@ -24,7 +24,7 @@ var postcss = require("gulp-postcss"),
 // meta tasks
 gulp.task('default', ['watch', 'browser-sync']);
 gulp.task('build', ['css', 'js-app', 'replace', 'imagemin', 'move']);
-gulp.task('datagen', ['clean', 'markdown', 'convert', 'transform']);
+gulp.task('datagen', ['clean', 'markdown', 'convert', 'transform', 'centroids']);
 
 // return true if convertable to number
 function isNumeric(n) {
@@ -81,7 +81,7 @@ gulp.task('replace', function() {
         .pipe(gulp.dest('./public/'));
 });
 
-// move fonts
+// move stuff from app to public
 gulp.task('move', function() {
     gulp.src('./app/fonts/*.*')
         .pipe(gulp.dest('./public/fonts/'));
@@ -89,6 +89,32 @@ gulp.task('move', function() {
         .pipe(gulp.dest('./public/data/'));
     gulp.src('./data/gl-style/**/*')
             .pipe(gulp.dest('./public/style/'));
+});
+
+// create point geojson from polygons
+gulp.task('centroids', function() {
+    console.log('Polys to centroids');
+    var turfCentroid = require('turf-centroid');
+    var geojson = require('./data/geography.geojson.json');
+
+    var points = [];
+
+    var result = {
+        "type": "FeatureCollection",
+        "features": points
+    };
+
+    _.each(geojson.features, function(f) {
+        points.push(
+            {
+                "type": "Feature",
+                "properties": { "id": f.properties.id},
+                "geometry": turfCentroid(f).geometry
+            }
+        );
+    });
+
+    fs.writeFile(path.join("./public/data", `labels.geojson.json`), JSON.stringify(result, null, '  '));
 });
 
 // JavaScript
