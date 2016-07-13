@@ -87,7 +87,7 @@ gulp.task('move', function() {
         .pipe(gulp.dest('./public/fonts/'));
     gulp.src('./data/npa.geojson.json')
         .pipe(gulp.dest('./public/data/'));
-    gulp.src('./app/style/**/*')
+    gulp.src('./data/gl-style/**/*')
             .pipe(gulp.dest('./public/style/'));
 });
 
