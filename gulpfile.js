@@ -97,22 +97,20 @@ gulp.task('centroids', function() {
     var turfCentroid = require('turf-centroid');
     var geojson = require('./data/geography.geojson.json');
 
-    var points = [];
-
     var result = {
         "type": "FeatureCollection",
-        "features": points
+        "features": []
     };
 
-    _.each(geojson.features, function(f) {
-        points.push(
+    for (var i = 0; i < geojson.features.length; i++) {
+        result.features.push(
             {
                 "type": "Feature",
-                "properties": { "id": f.properties.id},
-                "geometry": turfCentroid(f).geometry
+                "properties": {"id": geojson.features[i].properties.id},
+                "geometry": turfCentroid(geojson.features[i]).geometry
             }
         );
-    });
+    }
 
     fs.writeFile(path.join("./public/data", `labels.geojson.json`), JSON.stringify(result, null, '  '));
 });
