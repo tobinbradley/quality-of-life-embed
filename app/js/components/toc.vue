@@ -60,7 +60,7 @@
     <div id="toc">
         <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
         <h1 class="title">{{ title }}</h3>
-        <h2 class="description">{{ year }} {{ description }}<span v-if="units"> ({{ units }})</span>.</h4>
+        <h2 class="description" v-if="year">{{ year }} {{ description }}<span v-if="units"> ({{ units }})</span>.</h4>
         <div class="legend">
             <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 248.4 25" id="maplegend" role="img" aria-labelledby="svgTitle">
         		<title id="svgTitle">Choropleth legend</title>
@@ -95,7 +95,7 @@
 import abbrNum from '../modules/abbreviate-number';
 
 export default {
-    name: 'Toc',
+    name: 'sc-toc',
     filters: {
         abbrNumber: function (value, dec = 0) {
             return abbrNum(value, 2, dec);

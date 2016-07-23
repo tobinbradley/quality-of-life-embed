@@ -39,7 +39,7 @@ if (getURLParameter('b') !== null) {
     bounds = getURLParameter('b').split(',');
 }
 let metricId = 6;
-if (getURLParameter('m') !== null) {
+if (getURLParameter('m') !== null && config.metricConfig[`m${getURLParameter('m')}`]) {
     metricId = getURLParameter('m');
 }
 let year = 2015;
@@ -76,7 +76,7 @@ let appData = {
     color: colors.breaksGnBu5,
     description: '',
     year: year,
-    units: null,
+    units: config.metricConfig[`m${metricId}`].label ? config.metricConfig[`m${metricId}`].label : null,
     sigfigs: config.metricConfig[`m${metricId}`].decimals ? config.metricConfig[`m${metricId}`].decimals : 0
 };
 //window.appData = appData; // for debugging etc.
@@ -86,7 +86,7 @@ Toc.data = function() { return appData; };
 new Vue({
     el: 'body',
     components: {
-        toc: Toc
+        'sc-toc': Toc
     }
 });
 
@@ -96,7 +96,6 @@ document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metri
 // get meta
 getMeta(`data/meta/m${metricId}.html`)
     .then(function(meta) {
-        appData.units =  config.metricConfig[`m${metricId}`].label ? config.metricConfig[`m${metricId}`].label : null;
         appData.description = metaDescription(meta.data).replace('<p>', '').replace('</p>', '').trim();
     });
 
@@ -107,10 +106,19 @@ axios
         getGeoJSON('data/npa.geojson.json')
     ])
     .then(axios.spread(function (data, geojson) {
+        // verify year exists
+        let objTest = data.data[Object.keys(data.data)[0]];
+        if (!objTest[`y_${year}`]) {
+            let keys = Object.keys(objTest);
+            appData.year = keys[keys.length - 1].replace('y_', '');
+        } else {
+            appData.year = year;
+        }
         // add data to geojson and drop into Jenks array
-        let jenksData = makeJenksArray(data.data, [year]);
+        let jenksData = makeJenksArray(data.data, [appData.year]);
         let jenksBreaks = jenks(jenksData, 5);
-        let thegeoJSON = geojsonDataMerge(geojson.data, data.data, year);
+
+        let thegeoJSON = geojsonDataMerge(geojson.data, data.data, appData.year);
 
         // toc breaks
         appData.breaks = jenksBreaks;
