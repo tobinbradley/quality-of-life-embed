@@ -20,8 +20,8 @@ npm run start
 
 ## URL Arguments
 
-*   *m*: metric id
+*   *m*: metric id (integer)
 *   *t*: title
 *   *b*: map bounds (sw.lng, sw.lat, ne.lng, ne.lat)
 *   *s*: selected geography (id1, id2, ...)
-*   *y*: metric year
+*   *y*: metric year (i.e. 2010)
