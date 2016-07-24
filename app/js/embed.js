@@ -72,7 +72,7 @@ if (window!=window.top) {
 // app data cache
 let appData = {
     title: mapTitle,
-    breaks: [0,0,0,0,0],
+    breaks: null,
     color: colors.breaksGnBu5,
     description: '',
     year: year,
@@ -106,18 +106,16 @@ axios
         getGeoJSON('data/npa.geojson.json')
     ])
     .then(axios.spread(function (data, geojson) {
-        // verify year exists
+        // fix year if it doesn't exist
         let objTest = data.data[Object.keys(data.data)[0]];
         if (!objTest[`y_${year}`]) {
             let keys = Object.keys(objTest);
             appData.year = keys[keys.length - 1].replace('y_', '');
-        } else {
-            appData.year = year;
         }
+
         // add data to geojson and drop into Jenks array
         let jenksData = makeJenksArray(data.data, [appData.year]);
         let jenksBreaks = jenks(jenksData, 5);
-
         let thegeoJSON = geojsonDataMerge(geojson.data, data.data, appData.year);
 
         // toc breaks
