@@ -1,6 +1,8 @@
 # Quality of Life Embed/Print
 
-This project hasn't yet been deployed to [our public site](http://mcmap.org/qol/) and is still in development.
+An independent project related to the [Quality of Life Dashboard](https://github.com/tobinbradley/Mecklenburg-County-Quality-of-Life-Dashboard).
+
+[DEMO](http://mcmap.org/qol-embed/)
 
 ## Setup
 
@@ -24,4 +26,4 @@ npm run start
 *   *t*: title
 *   *b*: map bounds (sw.lng, sw.lat, ne.lng, ne.lat)
 *   *s*: selected geography (id1, id2, ...)
-*   *y*: metric year (i.e. 2010)
+*   *y*: metric year (integer)
