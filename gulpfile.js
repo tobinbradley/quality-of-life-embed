@@ -94,7 +94,8 @@ gulp.task('move', function() {
 // create point geojson from polygons
 gulp.task('centroids', function() {
     console.log('Polys to centroids');
-    var turfCentroid = require('turf-centroid');
+    //var turfCentroid = require('turf-centroid');
+    var turfCentroid = require('turf-point-on-surface');
     var geojson = require('./data/geography.geojson.json');
 
     var result = {

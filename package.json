@@ -38,7 +38,7 @@
     "normalize.css": "^4.1.1",
     "postcss-cssnext": "^2.6.0",
     "postcss-import": "^8.1.2",
-    "turf-centroid": "^3.0.12",
+    "turf-point-on-surface": "^3.0.12",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "vue": "^1.0.26",
