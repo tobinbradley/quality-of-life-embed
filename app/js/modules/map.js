@@ -17,6 +17,10 @@ let Map = class {
         let component = this;
         let bounds = this.bounds;
 
+        // disable map rotation using right click + drag and touch
+        map.dragRotate.disable();
+        map.touchZoomRotate.disableRotation();
+
         // send new bounds to parent on move end
         if (window!=window.top) {
             map.on('moveend', function() {
