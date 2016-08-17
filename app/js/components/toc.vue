@@ -43,6 +43,7 @@
         height: auto;
         /*max-height: 27px;*/
         max-height: 41px;
+        pointer-events: none; /* fix for ie11 click making legend disappear */
     }
 
     .legendText {
@@ -69,8 +70,8 @@
 <template>
     <div id="toc">
         <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-        <h1 class="title">{{ title }}</h3>
-        <h2 class="description">{{ year }} {{{ description }}}<span v-if="units"> ({{ units }})</span>.</h4>
+        <h1 class="title">{{ title }}, {{ year }}</h3>
+        <h2 class="description">{{{ description }}}<span v-if="units"> ({{ units }})</span>.</h4>
         <div class="legend">
             <svg v-if="breaks" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 248.4 39.2"id="maplegend" role="img" aria-labelledby="svgTitle">
                 <title id="svgTitle">Choropleth legend</title>
