@@ -15,7 +15,8 @@ import axios from 'axios';
 import getURLParameter from './modules/geturlparams';
 import {getMeta, getData, getGeoJSON} from './modules/fetch';
 import {metaDescription} from './modules/meta';
-import config from '../../data/config/config';
+import dataConfig from '../../data/config/v2/data';
+import mapConfig from '../../data/config/v2/map';
 import jenks from './modules/jenks';
 import colors from './modules/breaks';
 import Map from './modules/map';
@@ -38,8 +39,8 @@ let bounds = [];
 if (getURLParameter('b') !== null) {
     bounds = getURLParameter('b').split(',');
 }
-let metricId = 6;
-if (getURLParameter('m') !== null && config.metricConfig[`m${getURLParameter('m')}`]) {
+let metricId = '';
+if (getURLParameter('m') !== null && dataConfig[`m${getURLParameter('m')}`]) {
     metricId = getURLParameter('m');
 }
 let year = 2015;
@@ -53,8 +54,8 @@ if (getURLParameter('s') !== null) {
 let mapTitle = '';
 if (getURLParameter('t') !== null) {
     mapTitle = getURLParameter('t');
-} else {
-    mapTitle = config.metricConfig[`m${metricId}`].title;
+} else if (dataConfig[`m${metricId}`]) {
+    mapTitle = dataConfig[`m${metricId}`].title;
 }
 
 
@@ -76,8 +77,8 @@ let appData = {
     color: colors.breaksGnBu5,
     description: '',
     year: year,
-    units: config.metricConfig[`m${metricId}`].label ? config.metricConfig[`m${metricId}`].label : null,
-    sigfigs: config.metricConfig[`m${metricId}`].decimals ? config.metricConfig[`m${metricId}`].decimals : 0
+    units: dataConfig[`m${metricId}`] && dataConfig[`m${metricId}`].label ? dataConfig[`m${metricId}`].label : null,
+    sigfigs: dataConfig[`m${metricId}`] && dataConfig[`m${metricId}`].decimals ? dataConfig[`m${metricId}`].decimals : 0
 };
 //window.appData = appData; // for debugging etc.
 
@@ -91,49 +92,55 @@ new Vue({
 });
 
 // attribution link
-document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
+if (selected.length > 0 && document.querySelector('.attribution a')) {
+    document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
+}
 
-// get meta
-getMeta(`data/meta/m${metricId}.html`)
-    .then(function(meta) {
-        appData.description = metaDescription(meta.data).replace('<p>', '').replace('</p>', '').trim();
-    });
+
+// set routes and get meta
+let fetchRoutes = [getGeoJSON('data/npa.geojson.json')];
+if (metricId.length > 0) {
+    fetchRoutes.push(getData(`data/metric/map${metricId}.json`));
+    getMeta(`data/meta/m${metricId}.html`)
+        .then(function(meta) {
+            appData.description = metaDescription(meta.data).replace('<p>', '').replace('</p>', '').trim();
+        });
+}
 
 // Get data
 axios
-    .all([
-        getData(`data/metric/map${metricId}.json`),
-        getGeoJSON('data/npa.geojson.json')
-    ])
-    .then(axios.spread(function (data, geojson) {
-        // fix year if it doesn't exist
-        let objTest = data.data[Object.keys(data.data)[0]];
-        if (!objTest[`y_${year}`]) {
-            let keys = Object.keys(objTest);
-            appData.year = keys[keys.length - 1].replace('y_', '');
+    .all(fetchRoutes)
+    .then(axios.spread(function (geojson, data) {
+        let thegeoJSON = geojson.data;
+        if (data) {
+            // fix year if it doesn't exist
+            let objTest = data.data[Object.keys(data.data)[0]];
+            if (!objTest[`y_${year}`]) {
+                let keys = Object.keys(objTest);
+                appData.year = keys[keys.length - 1].replace('y_', '');
+            }
+
+            // add data to geojson and drop into Jenks array
+            var jenksData = makeJenksArray(data.data, [appData.year]);
+            var jenksBreaks = jenks(jenksData, 5);
+            thegeoJSON = geojsonDataMerge(geojson.data, data.data, appData.year);
+
+            // toc breaks
+            appData.breaks = jenksBreaks;
         }
-
-        // add data to geojson and drop into Jenks array
-        let jenksData = makeJenksArray(data.data, [appData.year]);
-        let jenksBreaks = jenks(jenksData, 5);
-        let thegeoJSON = geojsonDataMerge(geojson.data, data.data, appData.year);
-
-        // toc breaks
-        appData.breaks = jenksBreaks;
 
         // Create map
         let mapOptions = {
             container: 'map',
-            style: "./style/style.json",
+            style: mapConfig.style,
             attributionControl: false,
-            zoom: 9.5,
-            center: [-80.815,35.31],
-            maxBounds: [[-78.255, 37.384],[-83.285, 33.180]],
-            minZoom: 8,
-            preserveDrawingBuffer: navigator.userAgent.toLowerCase().indexOf('firefox') > -1  // fix for Firefox print
+            zoom: mapConfig.zoom,
+            center: mapConfig.center,
+            maxBounds: mapConfig.maxBounds,
+            minZoom: mapConfig.minZoom,
+            preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
         };
-        let map = new Map(mapOptions, thegeoJSON, jenksBreaks, colors.breaksGnBu5, bounds, selected);
+        let map = new Map(mapOptions, thegeoJSON, appData.breaks, colors.breaksGnBu5, bounds, selected);
         map.createMap();
-
     })
 );

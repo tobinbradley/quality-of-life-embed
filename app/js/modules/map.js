@@ -1,7 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 
 let Map = class {
-    constructor(mapOptions, geoJSON, breaks, colors, bounds = [], selected = []) {
+    constructor(mapOptions, geoJSON, breaks = null, colors, bounds = [], selected = []) {
         this.mapOptions = mapOptions;
         this.geoJSON = geoJSON;
         this.breaks = breaks;
@@ -32,7 +32,9 @@ let Map = class {
         // after map initiated, intiate and style neighborhoods and zoom to bounds
         map.on('load', function () {
             component.neighborhoodInit(component.geoJSON);
-            component.neighborhoodStyle(component.breaks, component.colors);
+            if (component.breaks) {
+                component.neighborhoodStyle(component.breaks, component.colors);
+            }
             component.neighborhoodSelected(component.selected);
             if (bounds.length === 4) {
                 map.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]]);
@@ -44,13 +46,10 @@ let Map = class {
     neighborhoodInit(geoJSON) {
         let map = this.map;
 
-        this.choroplethSource = new mapboxgl.GeoJSONSource({
+        map.addSource('neighborhoods', {
+            type: 'geojson',
             data: geoJSON
         });
-
-        let choroplethSource = this.choroplethSource;
-
-        map.addSource('neighborhoods', choroplethSource);
 
         // neighborhood boundaries
         map.addLayer({
@@ -59,7 +58,7 @@ let Map = class {
             'source': 'neighborhoods',
             'layout': {},
             'paint': {
-                'line-color': '#ffffff',
+                'line-color': '#666',
                 'line-width': 0.8
             }
         }, 'building');
@@ -94,16 +93,18 @@ let Map = class {
         }, 'water_label');
 
         // neighborhoods choropleth
-        map.addLayer({
-            'id': 'neighborhoods-fill',
-            'type': 'fill',
-            'source': 'neighborhoods',
-            'layout': {},
-            'filter': ['!=', 'choropleth', 'null'],
-            'paint': {
-                'fill-opacity': 1
-            }
-        }, 'neighborhoods-line');
+        if (this.breaks) {
+            map.addLayer({
+                'id': 'neighborhoods-fill',
+                'type': 'fill',
+                'source': 'neighborhoods',
+                'layout': {},
+                'filter': ['!=', 'choropleth', 'null'],
+                'paint': {
+                    'fill-opacity': 1
+                }
+            }, 'neighborhoods-line');
+        }
 
     }
 
@@ -142,7 +143,9 @@ let Map = class {
 
     // change the mapped data
     updateChrolopleth(geoJSON, breaks) {
-        this.choroplethSource.setData(geoJSON);
+        this.map.getSource('neighborhoods').setData({
+            data: geoJSON
+        });
         this.neighborhoodStyle(breaks, this.colors);
         this.neighborhoodSelected(this.selected);
     }

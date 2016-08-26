@@ -2,12 +2,14 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="Tobin Bradley">
-    <meta name="description" content="Print and embed page for the Quality of Life Explorer.">
-	<title>Quality of Life Explorer</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="{{ header.description }}">
+    <meta name="keywords" content="{{ header.keywords }}">
+    <meta name="author" content="{{ header.author }}">
+
+    <!-- Set the title here -->
+    <title>{{ header.title }}</title>
 
 	<!-- favicon -->
 	<link rel="icon" type="image/png" href="img/favicon.png">
@@ -19,7 +21,7 @@
 	<!-- Add to homescreen for Safari on iOS 152x152 -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="Quality of Life Explorer">
+	<meta name="apple-mobile-web-app-title" content="{{ header.title }}">
 	<link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-precomposed.png">
 
 	<!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -38,7 +40,7 @@
         <div id="map"></div>
 
         <!-- attribution -->
-        <span class="attribution">Charlotte-Mecklenburg Quality of Life Explorer &bull; <a href="http://mcmap.org/qol" target="_blank">mcmap.org/qol</a></span>
+        <span class="attribution">{{header.title}}{{#if qoldashboardURL}} &bull; <a href="{{qoldashboardURL}}" target="_blank">{{fancyURL qoldashboardURL}}</a>{{/if}}</span>
 
         <!-- toc -->
         <sc-toc></sc-toc>
