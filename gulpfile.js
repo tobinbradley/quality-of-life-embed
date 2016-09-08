@@ -102,7 +102,7 @@ gulp.task('template', function(cb) {
 gulp.task('move', function() {
     gulp.src('./app/fonts/*.*')
         .pipe(gulp.dest('./public/fonts/'));
-    gulp.src('./data/npa.geojson.json')
+    gulp.src('./data/geography.geojson.json')
         .pipe(gulp.dest('./public/data/'));
     gulp.src('./data/gl-style/**/*')
         .pipe(gulp.dest('./public/style/'));

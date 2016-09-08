@@ -98,7 +98,7 @@ if (selected.length > 0 && document.querySelector('.attribution a')) {
 
 
 // set routes and get meta
-let fetchRoutes = [getGeoJSON('data/npa.geojson.json')];
+let fetchRoutes = [getGeoJSON('data/geography.geojson.json')];
 if (metricId.length > 0) {
     fetchRoutes.push(getData(`data/metric/map${metricId}.json`));
     getMeta(`data/meta/m${metricId}.html`)

@@ -47,8 +47,8 @@
         }
 
         .legendText {
-            font-family:'Roboto Condensed', sans-serif;
-            font-size:11px;
+            font-family:'Roboto', sans-serif;
+            font-size:10px;
             letter-spacing:0px;
             line-height:100%;
             stroke-width:1px;
@@ -123,7 +123,7 @@ export default {
     name: 'sc-toc',
     filters: {
         abbrNumber: function (value, dec = 0) {
-            return abbrNum(value, 2, dec);
+            return abbrNum(value, 1, dec);
         }
     }
 }
