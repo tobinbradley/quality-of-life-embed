@@ -19,7 +19,8 @@ var postcss = require("gulp-postcss"),
     del = require('del'),
     _ = require('lodash'),
     fs = require('fs'),
-    siteConfig = require('./data/config/v2/site.js'),
+    siteConfig = require('./data/config/site.js'),
+    dataConfig = require('./data/config/data.js'),
     path = require('path');
 
 
@@ -203,7 +204,7 @@ gulp.task('convert', ['clean'], function() {
 // convert/move json files
 gulp.task('transform', ['clean', 'convert'], function(cb) {
     var dest = "./public/data/metric";
-    var config = require('./data/config/config.js').metricConfig;
+    var config = dataConfig;
 
     mkdirp(dest);
 
