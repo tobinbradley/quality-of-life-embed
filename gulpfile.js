@@ -26,8 +26,25 @@ var postcss = require("gulp-postcss"),
 
 // meta tasks
 gulp.task('default', ['watch', 'browser-sync']);
-gulp.task('build', ['css', 'js-app', 'template', 'imagemin', 'move']);
+gulp.task('build', ['css', 'js-app', 'workers', 'template', 'imagemin', 'move']);
 gulp.task('datagen', ['clean', 'markdown', 'convert', 'transform', 'centroids']);
+
+// workers
+gulp.task('workers', function () {
+    _.each(['jenksbreaks.js'], function(file) {
+        browserify(`./app/js/workers/${file}`)
+          .transform(babelify)
+          .transform(rollupify)
+          .bundle()
+          .pipe(source(file))
+          .pipe(buffer())
+          .pipe(sourcemaps.init({loadMaps: true}))
+          .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
+          .on('error', gutil.log)
+          .pipe(sourcemaps.write('./'))
+          .pipe(gulp.dest('./public/js/workers'));
+    });
+});
 
 // return true if convertable to number
 function isNumeric(n) {
@@ -68,6 +85,7 @@ gulp.task('watch', function() {
     gulp.watch(['./app/*.html'], ['template']);
     gulp.watch(['./app/css/**/*.css'], ['css']);
     gulp.watch(['./app/js/**/*.js', './app/js/**/*.vue'], ['js-app']);
+    gulp.watch(['./app/js/workers/*.js'], ['workers']);
     gulp.watch('./app/img/**/*', ['imagemin']);
 });
 
@@ -130,10 +148,7 @@ gulp.task('centroids', function() {
                 "geometry": turfCentroid(geojson.features[i]).geometry
             });
         }
-
         fs.writeFile(path.join("./public/data", `labels.geojson.json`), JSON.stringify(result, null, '  '));
-
-
 
     });
 
@@ -141,8 +156,8 @@ gulp.task('centroids', function() {
 
 // JavaScript
 gulp.task('js-app', function() {
-    _.each(['app.js', 'embed.js'], function(file) {
-        //_.each(['embed.js'], function(file) {
+    //_.each(['app.js', 'embed.js'], function(file) {
+    _.each(['embed.js'], function(file) {
         browserify(`./app/js/${file}`)
             .transform(vueify)
             .transform(babelify)
@@ -204,51 +219,39 @@ gulp.task('convert', ['clean'], function() {
 // convert/move json files
 gulp.task('transform', ['clean', 'convert'], function(cb) {
     var dest = "./public/data/metric";
-    var config = dataConfig;
-
     mkdirp(dest);
 
-    _.each(config, function(m) {
+    _.each(dataConfig, function(m) {
         if (m.type === "sum") {
-            var r = require('./tmp/r' + m.metric + '.json');
-            fs.writeFileSync(path.join(dest, `map${m.metric}.json`), JSON.stringify(jsonTransform(r), null, '  '));
-            // if (m.accuracy) {
-            //     var a = require('./tmp/m' + m.metric + '-accuracy.json');
-            //     fs.writeFileSync(path.join(dest, `a${m.metric}.json`), JSON.stringify(jsonTransform(a), null, '  '));
-            // }
+            let r = require('./tmp/r' + m.metric + '.json');
+            let outJSON= {};
+            outJSON["map"] = jsonTransform(r);
+            fs.writeFileSync(path.join(dest, `m${m.metric}.json`), JSON.stringify(outJSON, null, '  '));
         }
         if (m.type === "mean") {
             var n = require('./tmp/r' + m.metric + '.json');
-            fs.writeFileSync(path.join(dest, `map${m.metric}.json`), JSON.stringify(jsonTransform(n), null, '  '));
-            // if (m.raw_label) {
-            //     var r = require('./tmp/r' + m.metric + '.json');
-            //     fs.writeFileSync(path.join(dest, `r${m.metric}.json`), JSON.stringify(jsonTransform(r), null, '  '));
-            // }
-            // if (m.accuracy) {
-            //     var a = require('./tmp/m' + m.metric + '-accuracy.json');
-            //     fs.writeFileSync(path.join(dest, `a${m.metric}.json`), JSON.stringify(jsonTransform(a), null, '  '));
-            // }
+            let outJSON= {};
+            outJSON["map"] = jsonTransform(n);
+            fs.writeFileSync(path.join(dest, `m${m.metric}.json`), JSON.stringify(outJSON, null, '  '));
         }
         if (m.type === "weighted") {
-            // if (m.accuracy) {
-            //     var a = require('./tmp/m' + m.metric + '-accuracy.json');
-            //     fs.writeFileSync(path.join(dest, `a${m.metric}.json`), JSON.stringify(jsonTransform(a), null, '  '));
-            // }
-            var r = require('./tmp/r' + m.metric + '.json');
-            var d = require('./tmp/d' + m.metric + '.json');
+            let outJSON= {};
+            let r = require('./tmp/r' + m.metric + '.json');
+            let d = require('./tmp/d' + m.metric + '.json');
             var jsonArrayR = jsonTransform(r);
             var jsonArrayD = jsonTransform(d);
             for (key in jsonArrayR) {
                 for (key2 in jsonArrayR[key]) {
                     if (isNumeric(jsonArrayR[key][key2]) && isNumeric(jsonArrayD[key][key2])) {
-                        jsonArrayR[key][key2] = Math.round((jsonArrayR[key][key2] / jsonArrayD[key][key2]) * 100) / 100;
+                        jsonArrayR[key][key2] = Math.round((jsonArrayR[key][key2] / jsonArrayD[key][key2]) * 1000) / 1000;
                     } else {
                         jsonArrayR[key][key2] = null;
                     }
                 }
             }
-            fs.writeFileSync(path.join(dest, `map${m.metric}.json`), JSON.stringify(jsonArrayR, null, '  '));
-            //fs.writeFileSync(path.join(dest, `w${m.metric}.json`), JSON.stringify(jsonArrayD, null, '  '));
+            outJSON["w"] = jsonArrayD;
+            outJSON["map"] = jsonArrayR;
+            fs.writeFileSync(path.join(dest, `m${m.metric}.json`), JSON.stringify(outJSON, null, '  '));
         }
     });
     del(['./tmp/**']);

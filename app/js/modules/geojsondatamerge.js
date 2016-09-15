@@ -1,4 +1,4 @@
-import isNumeric from './validate-number';
+import isNumeric from './isnumeric';
 
 function geojsonDataMerge(g, d, y) {
     for (let i = 0; i < g.features.length; i++) {

@@ -11,20 +11,15 @@ ____________________________________
 */
 
 require('es6-promise').polyfill();  // fix for Axois on IE11
-import axios from 'axios';
 import getURLParameter from './modules/geturlparams';
-import {getMeta, getData, getGeoJSON} from './modules/fetch';
-import {metaDescription} from './modules/meta';
+import fetchData from './modules/fetch';
 import dataConfig from '../../data/config/data';
 import mapConfig from '../../data/config/map';
-import jenks from './modules/jenks';
 import colors from './modules/breaks';
-import Map from './modules/map';
-import geojsonDataMerge from './modules/geojsondatamerge';
-import makeJenksArray from './modules/jenksbreaks';
 import webglCheck from './modules/webglcheck';
 import Vue from 'vue';
-import Toc from './components/toc.vue';
+import ToC from './components/toc.vue';
+import MapGL from './components/map.vue';
 
 
 webglCheck();  // Make sure WebGL is in da house
@@ -35,10 +30,10 @@ webglCheck();  // Make sure WebGL is in da house
 //     y   year
 //     s   selected
 //     t   map title
-let bounds = [];
-if (getURLParameter('b') !== null) {
-    bounds = getURLParameter('b').split(',');
-}
+// let bounds = [];
+// if (getURLParameter('b') !== null) {
+//     bounds = getURLParameter('b').split(',');
+// }
 let metricId = '';
 if (getURLParameter('m') !== null && dataConfig[`m${getURLParameter('m')}`]) {
     metricId = getURLParameter('m');
@@ -58,11 +53,27 @@ if (getURLParameter('t') !== null) {
     mapTitle = dataConfig[`m${metricId}`].title;
 }
 
+// the shared state between components
+let appState = {
+    metric: {
+        config: null,
+        years: [],
+        data: null
+    },
+    colors: colors.breaksGnBu5,
+    breaks: null,
+    selected: selected,
+    year: year,
+    metadata: null
+};
+
+// for debugging
+window.appState = appState;
 
 // parent/iframe communications
 window.onmessage = function(e){
     if (e.data.title) {
-        appData.title = e.data.title;
+        appState.title = e.data.title;
     }
 };
 if (window!=window.top) {
@@ -70,24 +81,52 @@ if (window!=window.top) {
 }
 
 
-// app data cache
-let appData = {
-    title: mapTitle,
-    breaks: null,
-    color: colors.breaksGnBu5,
-    description: '',
-    year: year,
-    units: dataConfig[`m${metricId}`] && dataConfig[`m${metricId}`].label ? dataConfig[`m${metricId}`].label : null,
-    sigfigs: dataConfig[`m${metricId}`] && dataConfig[`m${metricId}`].decimals ? dataConfig[`m${metricId}`].decimals : 0
-};
 //window.appData = appData; // for debugging etc.
 
+// grab initial data
+fetchData(appState, metricId);
+
 // set up vue components
-Toc.data = function() { return appData; };
+ToC.data = function() {
+    return {
+        sharedState: appState,
+        privateState: {
+            metaDesc: null,
+            selected: null,
+            area: null,
+            selectedRaw: null,
+            areaRaw: null
+        }
+    };
+};
+
+MapGL.data = function() {
+    return {
+        sharedState: appState,
+        privateState: {
+            locate: null,
+            mapOptions: {
+                container: 'map',
+                style: mapConfig.style,
+                attributionControl: false,
+                zoom: mapConfig.zoomEmbed,
+                center: mapConfig.centerEmbed,
+                maxBounds: mapConfig.maxBounds,
+                minZoom: mapConfig.minZoom,
+                preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
+            },
+            mapLoaded: false,
+            metricId: null,
+            geoJSON: null
+        }
+    };
+};
+
 new Vue({
     el: 'body',
     components: {
-        'sc-toc': Toc
+        'sc-toc': ToC,
+        'sc-map': MapGL
     }
 });
 
@@ -95,52 +134,3 @@ new Vue({
 if (selected.length > 0 && document.querySelector('.attribution a')) {
     document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
 }
-
-
-// set routes and get meta
-let fetchRoutes = [getGeoJSON('data/geography.geojson.json')];
-if (metricId.length > 0) {
-    fetchRoutes.push(getData(`data/metric/map${metricId}.json`));
-    getMeta(`data/meta/m${metricId}.html`)
-        .then(function(meta) {
-            appData.description = metaDescription(meta.data).replace('<p>', '').replace('</p>', '').trim();
-        });
-}
-
-// Get data
-axios
-    .all(fetchRoutes)
-    .then(axios.spread(function (geojson, data) {
-        let thegeoJSON = geojson.data;
-        if (data) {
-            // fix year if it doesn't exist
-            let objTest = data.data[Object.keys(data.data)[0]];
-            if (!objTest[`y_${year}`]) {
-                let keys = Object.keys(objTest);
-                appData.year = keys[keys.length - 1].replace('y_', '');
-            }
-
-            // add data to geojson and drop into Jenks array
-            var jenksData = makeJenksArray(data.data, [appData.year]);
-            var jenksBreaks = jenks(jenksData, 5);
-            thegeoJSON = geojsonDataMerge(geojson.data, data.data, appData.year);
-
-            // toc breaks
-            appData.breaks = jenksBreaks;
-        }
-
-        // Create map
-        let mapOptions = {
-            container: 'map',
-            style: mapConfig.style,
-            attributionControl: false,
-            zoom: mapConfig.zoom,
-            center: mapConfig.center,
-            maxBounds: mapConfig.maxBounds,
-            minZoom: mapConfig.minZoom,
-            preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
-        };
-        let map = new Map(mapOptions, thegeoJSON, appData.breaks, colors.breaksGnBu5, bounds, selected);
-        map.createMap();
-    })
-);

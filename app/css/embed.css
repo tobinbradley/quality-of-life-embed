@@ -18,7 +18,7 @@ ____________________________________
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 .container {
@@ -45,21 +45,10 @@ body {
     background: rgba(255,255,255,0.7);
 }
 
-.background-print-img{
-    display: none;
-}
+
 
 
 @media print{
-    .background-print-img{
-        display: block;
-        width:100%;
-        height: 99%;
-        position:absolute;
-        left: 0;
-        top: 0;
-        z-index: 1;
-    }
     #map {
         border: 1px solid black;
     }

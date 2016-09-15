@@ -1,13 +1,46 @@
+import dataConfig from '../../../data/config/data';
 import axios from 'axios';
 
-export function getMeta(endpoint) {
-    return axios.get(endpoint);
-}
+export default function fetchData(appState, metric) {
+    appState.metricId = metric;
 
-export function getData(endpoint) {
-    return axios.get(endpoint);
-}
+    // fetch data
+    axios.get(`data/metric/m${appState.metricId}.json`)
+        .then(function (data) {
+            let nKeys = Object.keys(data.data.map);
+            let yKeys = Object.keys(data.data.map[nKeys[0]]);
+            let years = yKeys.map(function(el) { return el.replace('y_', ''); });
 
-export function getGeoJSON(endpoint) {
-    return axios.get(endpoint);
+            // drop invalid selected values
+            for (let i = 0; i < appState.selected.length; i++) {
+                if (nKeys.indexOf(appState.selected[i]) === -1) {
+                    let pos = appState.selected.indexOf(appState.selected[i]);
+                    appState.selected.splice(pos, 1);
+                }
+            }
+
+            appState.metric = {
+                config: dataConfig[`m${metric}`],
+                years: years,
+                data: data.data
+            };
+
+            // replace year if previous year doesn't exist in data
+            if (years.indexOf(appState.year) === -1) {
+                appState.year = years[years.length - 1];
+            }
+
+            // jenks worker
+            let worker = new Worker('./js/workers/jenksbreaks.js');
+            worker.addEventListener('message', function(e) {
+                appState.breaks = e.data;
+            }, false);
+            worker.postMessage([data.data.map, years, 5]);
+        });
+
+    // fetch metadata
+    axios.get(`./data/meta/m${metric}.html`)
+        .then(function (response) {
+            appState.metadata = response.data;
+        });
 }
