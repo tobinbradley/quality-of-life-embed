@@ -27,6 +27,14 @@ export default {
             map.dragRotate.disable();
             map.touchZoomRotate.disableRotation();
 
+            // send new bounds to parent on move end
+            if (window!=window.top) {
+                map.on('moveend', function() {
+                    let bounds = map.getBounds();
+                    parent.postMessage({"bounds": `${bounds._sw.lng.toFixed(4)},${bounds._sw.lat.toFixed(4)},${bounds._ne.lng.toFixed(4)},${bounds._ne.lat.toFixed(4)}`},"*");
+                 });
+            }
+
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
                 axios.get('data/geography.geojson.json')
@@ -37,6 +45,11 @@ export default {
                         _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
                     });
+
+                if (_this.privateState.bounds.length === 4) {
+                    let bounds = _this.privateState.bounds;
+                    map.fitBounds([[bounds[0],bounds[3]], [bounds[2],bounds[1]]]);
+                }
             });
 
         },

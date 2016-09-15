@@ -30,10 +30,10 @@ webglCheck();  // Make sure WebGL is in da house
 //     y   year
 //     s   selected
 //     t   map title
-// let bounds = [];
-// if (getURLParameter('b') !== null) {
-//     bounds = getURLParameter('b').split(',');
-// }
+let bounds = [];
+if (getURLParameter('b') !== null) {
+    bounds = getURLParameter('b').split(',');
+}
 let metricId = '';
 if (getURLParameter('m') !== null && dataConfig[`m${getURLParameter('m')}`]) {
     metricId = getURLParameter('m');
@@ -117,7 +117,8 @@ MapGL.data = function() {
             },
             mapLoaded: false,
             metricId: null,
-            geoJSON: null
+            geoJSON: null,
+            bounds: bounds
         }
     };
 };
