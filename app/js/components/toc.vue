@@ -102,10 +102,12 @@ export default {
         processArea: function() {
             let metric = this.sharedState.metric;
             let keys = Object.keys(metric.data.map);
-
-
-            let areaValue = calcValue(metric.data, metric.config.type, this.sharedState.year, keys);
-            this.privateState.area = prettyNumber(areaValue, metric.config.decimals, metric.config.prefix, metric.config.suffix);
+            if (metric.config.world_val && metric.config.world_val[`y_${this.sharedState.year}`]) {
+                this.privateState.area = prettyNumber(metric.config.world_val[`y_${this.sharedState.year}`], metric.config.decimals, metric.config.prefix, metric.config.suffix);
+            } else {
+                let areaValue = calcValue(metric.data, metric.config.type, this.sharedState.year, keys);
+                this.privateState.area = prettyNumber(areaValue, metric.config.decimals, metric.config.prefix, metric.config.suffix);
+            }
             if (metric.config.raw_label) {
                 let rawArray = wValsToArray(metric.data.map, metric.data.w, [this.sharedState.year], keys);
                 let rawValue = sum(rawArray);
