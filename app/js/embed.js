@@ -46,7 +46,7 @@ let selected = [];
 if (getURLParameter('s') !== null) {
     selected = getURLParameter('s').split(",");
 }
-let mapTitle = '';
+let mapTitle = null;
 if (getURLParameter('t') !== null) {
     mapTitle = getURLParameter('t');
 } else if (dataConfig[`m${metricId}`]) {
@@ -64,7 +64,8 @@ let appState = {
     breaks: null,
     selected: selected,
     year: year,
-    metadata: null
+    metadata: null,
+    title: mapTitle
 };
 
 // for debugging

@@ -2,7 +2,7 @@
     <div id="toc" v-if="sharedState.metric.config">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-            <h1 class="title">{{ sharedState.metric.config.title }}, {{ sharedState.year }}</h1>
+            <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
                     <span class="metrictype">SELECTED</span>
