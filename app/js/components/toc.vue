@@ -19,7 +19,7 @@
                     The County total is {{privateState.areaRaw}} {{{sharedState.metric.config.raw_label.toLowerCase()}}}.
                 </span>
                 <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0">
-                    The selected NPA total is {{privateState.selectedRaw}} {{{sharedState.metric.config.raw_label.toLowerCase()}}}.
+                    The selected total is {{privateState.selectedRaw}} {{{sharedState.metric.config.raw_label.toLowerCase()}}}.
                 </span>
             </h2>
             <div class="legend">
