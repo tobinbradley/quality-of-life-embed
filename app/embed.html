@@ -4,12 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="{{ header.description }}">
-    <meta name="keywords" content="{{ header.keywords }}">
-    <meta name="author" content="{{ header.author }}">
-
-    <!-- Set the title here -->
-    <title>{{ header.title }}</title>
+    <meta name="description" content="{{ siteConfig.description }}">
+    <meta name="keywords" content="{{ siteConfig.keywords }}">
+    <meta name="author" content="{{ siteConfig.author }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>{{ siteConfig.title }}</title>
 
 	<!-- favicon -->
 	<link rel="icon" type="image/png" href="img/favicon.png">
@@ -21,7 +20,7 @@
 	<!-- Add to homescreen for Safari on iOS 152x152 -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="{{ header.title }}">
+	<meta name="apple-mobile-web-app-title" content="{{ siteConfig.title }}">
 	<link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-precomposed.png">
 
 	<!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -30,7 +29,7 @@
 
 	<!-- Fonts and CSS -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-	<link rel="stylesheet" href="css/embed.css?foo={{cachebuster}}">
+	<link rel="stylesheet" href="css/embed.css?{{cachebuster}}">
 
 </head>
 
@@ -40,7 +39,7 @@
         <sc-map></sc-map>
 
         <!-- attribution -->
-        <span class="attribution">{{header.title}}{{#if qoldashboardURL}} &bull; <a href="{{qoldashboardURL}}" target="_blank">{{fancyURL qoldashboardURL}}</a>{{/if}}</span>
+        <span class="attribution">{{siteConfig.title}}{{#if siteConfig.qoldashboardURL}} &bull; <a href="{{siteConfig.qoldashboardURL}}" target="_blank">{{fancyURL siteConfig.qoldashboardURL}}</a>{{/if}}</span>
 
         <!-- toc -->
         <sc-toc></sc-toc>
@@ -64,7 +63,7 @@
 			m.parentNode.insertBefore(a, m)
 		})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-		ga('create', '{{ gaKey }}', 'auto');
+		ga('create', '{{ siteConfig.gaKey }}', 'auto');
 		ga('send', 'pageview');
 	</script>
 </body>
