@@ -126,8 +126,7 @@ gulp.task('move', function() {
 
 // JavaScript
 gulp.task('js-app', function() {
-    //_.each(['app.js', 'embed.js'], function(file) {
-    _.each(['embed.js'], function(file) {
+    _.each(['app.js', 'embed.js'], function(file) {
         browserify(`./app/js/${file}`)
             .transform(vueify)
             .transform(babelify)
