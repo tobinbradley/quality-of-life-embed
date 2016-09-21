@@ -25,24 +25,9 @@ var postcss = require("gulp-postcss"),
 
 // meta tasks
 gulp.task('default', ['watch', 'browser-sync']);
-gulp.task('build', ['css', 'js-app', 'workers', 'template', 'imagemin', 'move']);
+gulp.task('build', ['css', 'js-app', 'template', 'imagemin', 'move']);
 gulp.task('datagen', ['clean', 'markdown', 'convert', 'transform']);
 
-// workers
-gulp.task('workers', function () {
-    _.each(['jenksbreaks.js'], function(file) {
-        browserify(`./app/js/workers/${file}`)
-          .transform(babelify)
-          .bundle()
-          .pipe(source(file))
-          .pipe(buffer())
-          .pipe(sourcemaps.init({loadMaps: true}))
-          .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
-          .on('error', gutil.log)
-          .pipe(sourcemaps.write('./'))
-          .pipe(gulp.dest('./public/js/workers'));
-    });
-});
 
 // return true if convertable to number
 function isNumeric(n) {
@@ -83,7 +68,6 @@ gulp.task('watch', function() {
     gulp.watch(['./app/*.html'], ['template']);
     gulp.watch(['./app/css/**/*.css'], ['css']);
     gulp.watch(['./app/js/**/*.js', './app/js/**/*.vue'], ['js-app']);
-    gulp.watch(['./app/js/workers/*.js'], ['workers']);
     gulp.watch('./app/img/**/*', ['imagemin']);
 });
 
