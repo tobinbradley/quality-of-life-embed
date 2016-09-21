@@ -15,6 +15,7 @@ import getURLParameter from './modules/geturlparams';
 import fetchData from './modules/fetch';
 import dataConfig from '../../data/config/data';
 import mapConfig from '../../data/config/map';
+import siteConfig from '../../data/config/site';
 import colors from './modules/breaks';
 import webglCheck from './modules/webglcheck';
 import Vue from 'vue';
@@ -134,5 +135,5 @@ new Vue({
 
 // attribution link
 if (selected.length > 0 && document.querySelector('.attribution a')) {
-    document.querySelector('.attribution a').href = `http://mcmap.org/qol?m=m${metricId}&n=${selected.join(',')}`;
+    document.querySelector('.attribution a').href = `${siteConfig.qoldashboardURL}?m=m${metricId}&n=${selected.join(',')}`;
 }

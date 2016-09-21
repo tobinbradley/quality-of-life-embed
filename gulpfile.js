@@ -8,7 +8,6 @@ var postcss = require("gulp-postcss"),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     babelify = require('babelify'),
-    rollupify = require('rollupify'),
     vueify = require('vueify'),
     uglify = require('gulp-uglify'),
     nano = require('gulp-cssnano'),
@@ -34,7 +33,6 @@ gulp.task('workers', function () {
     _.each(['jenksbreaks.js'], function(file) {
         browserify(`./app/js/workers/${file}`)
           .transform(babelify)
-          .transform(rollupify)
           .bundle()
           .pipe(source(file))
           .pipe(buffer())
@@ -133,7 +131,6 @@ gulp.task('js-app', function() {
         browserify(`./app/js/${file}`)
             .transform(vueify)
             .transform(babelify)
-            .transform(rollupify)
             .bundle()
             .pipe(source(file))
             .pipe(buffer())
