@@ -42,7 +42,21 @@
 
             <div class="form ">
                 <h3>Embed</h3>
-				<input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
+                <!-- <label for="mapmetric">Variable</label>
+                <select id="mapmetric">
+                    {{#each categories}}
+                    <optgroup label="{{this}}">
+                            {{#each ../dataConfig}}
+                            {{#ifCond category ../this }}
+                            <option value="{{metric}}">{{title}}</option>
+                            {{/ifCond}}
+                            {{/each}}
+                    </optgroup>
+                    {{/each}}
+                </select> -->
+                <label for="maptitle">Title</label>
+                <input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
+                <label for="embedCode">Drop this in your web page</label>
                 <textarea name="embedCode" rows="3" aria-label="embed iframe code"></textarea>
             </div>
             <div style="clear:both"></div>

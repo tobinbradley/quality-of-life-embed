@@ -35,9 +35,14 @@ let bounds = [];
 if (getURLParameter('b') !== null) {
     bounds = getURLParameter('b').split(',');
 }
-let metricId = '';
-if (getURLParameter('m') !== null && dataConfig[`m${getURLParameter('m')}`]) {
-    metricId = getURLParameter('m');
+// get random metric if none provided and validate provided
+let keys = Object.keys(dataConfig);
+let metricId = keys[Math.floor(Math.random() * keys.length)].replace('m', '');
+if (getURLParameter("m")) {
+    let passedMetric = getURLParameter("m").replace('m', '');
+    if (keys.indexOf(`m${passedMetric}`) !== -1) {
+        metricId = passedMetric;
+    }
 }
 let year = 2015;
 if (getURLParameter('y') !== null) {

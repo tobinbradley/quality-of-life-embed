@@ -11,11 +11,12 @@ ____________________________________
 */
 
 import getURLParameter from './modules/geturlparams';
+import dataConfig from '../../data/config/data';
 
 // set defaults
 let b = [];
 let s = [];
-let m = 6;
+let m = '';
 let y = 2015;
 let t = '';
 let container = document.querySelector("textarea");
@@ -30,8 +31,13 @@ let container = document.querySelector("textarea");
 if (getURLParameter('b') !== null) {
     b = getURLParameter('b').split(',');
 }
-if (getURLParameter('m') !== null) {
-    m = getURLParameter('m');
+let keys = Object.keys(dataConfig);
+m = keys[Math.floor(Math.random() * keys.length)].replace('m', '');
+if (getURLParameter("m")) {
+    let passedMetric = getURLParameter("m").replace('m', '');
+    if (keys.indexOf(`m${passedMetric}`) !== -1) {
+        m = passedMetric;
+    }
 }
 if (getURLParameter('y') !== null) {
     y = getURLParameter('y');
@@ -57,6 +63,14 @@ function setURL(m, y, b, s, t) {
 function setEmbed(url, con) {
     con.value = `<iframe src="${url}" style="width: 500px; height: 500px; border: 1px solid #595959"></iframe>`;
 }
+
+// handle metric dropdown
+// let mapmetric = document.querySelector('#mapmetric');
+// mapmetric.value = m;
+// mapmetric.onchange = function() {
+//     m = this.value;
+//     setEmbed(setURL(m, y, b, s, t), container);
+// };
 
 // parent/iframe communications
 window.titleChange = function (title) {

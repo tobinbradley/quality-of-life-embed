@@ -10,6 +10,7 @@ An independent project related to the [Quality of Life Dashboard](https://github
 git clone https://github.com/tobinbradley/quality-of-life-embed.git
 cd quality-of-life-embed
 git clone https://github.com/tobinbradley/mecklenburg-quality-of-life-data data
+npm install
 npm run datagen
 npm run build
 ```
@@ -18,6 +19,12 @@ npm run build
 
 ``` bash
 npm run start
+```
+
+## Build for production
+
+``` bash
+npm run build
 ```
 
 ## URL Arguments
