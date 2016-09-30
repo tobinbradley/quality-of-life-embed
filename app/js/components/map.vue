@@ -41,15 +41,20 @@ export default {
                     .then(function(response) {
                         _this.privateState.mapLoaded = true;
                         _this.privateState.geoJSON = response.data;
+
+                        if (_this.privateState.bounds.length === 4) {
+                            let bounds = _this.privateState.bounds;
+                            map.fitBounds([[bounds[0],bounds[3]], [bounds[2],bounds[1]]]);
+                        }
+                        else if (_this.sharedState.selected.length > 0) {
+                            _this.zoomNeighborhoods();
+                        }
+
                         _this.initNeighborhoods();
                         _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
                     });
 
-                if (_this.privateState.bounds.length === 4) {
-                    let bounds = _this.privateState.bounds;
-                    map.fitBounds([[bounds[0],bounds[3]], [bounds[2],bounds[1]]]);
-                }
             });
 
         },
@@ -180,6 +185,22 @@ export default {
             let _this = this;
             let geoObj = geojsonDataMerge(_this.privateState.geoJSON, _this.sharedState.metric.data.map, _this.sharedState.year);
             return geoObj;
+        },
+        zoomNeighborhoods: function () {
+            let bounds = new mapboxgl.LngLatBounds();
+            let _this = this;
+
+            this.privateState.geoJSON.features.forEach(function(feature) {
+                if (_this.sharedState.selected.indexOf(feature.properties.id) !== -1) {
+                    feature.geometry.coordinates.forEach(function(coord) {
+                        coord.forEach(function(el) {
+                            bounds.extend(el);
+                        })
+                    });
+                }
+            });
+
+            this.privateState.map.fitBounds(bounds, {padding: 100});
         }
     },
     ready: function () {
