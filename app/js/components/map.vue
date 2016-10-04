@@ -203,7 +203,7 @@ export default {
             this.privateState.map.fitBounds(bounds, {padding: 100});
         }
     },
-    ready: function () {
+    mounted: function () {
         this.initMap();
     }
 

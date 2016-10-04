@@ -131,12 +131,14 @@ MapGL.data = function() {
 };
 
 new Vue({
-    el: 'body',
-    components: {
-        'sc-toc': ToC,
-        'sc-map': MapGL
-    }
+    el: 'sc-toc',
+    render: h => h(ToC)
 });
+new Vue({
+    el: 'sc-map',
+    render: h => h(MapGL)
+});
+
 
 // attribution link
 if (selected.length > 0 && document.querySelector('.attribution a')) {

@@ -91,7 +91,7 @@ gulp.task('template', function(cb) {
         }
         return url;
     });
-    
+
      handlebars.registerHelper('ifCond', function(v1, v2, options) {
         if(v1 === v2) {
             return options.fn(this);
@@ -146,7 +146,6 @@ gulp.task("css", function() {
         .pipe(sourcemaps.init())
         .pipe(postcss([
             require("postcss-import")(),
-            require("postcss-nested"),
             require("autoprefixer")({
                 'browers': ['last 2 version']
             })

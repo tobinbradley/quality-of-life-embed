@@ -3,9 +3,9 @@
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
             <div class="tocposition">
-               <a href="javascript:void(0)" title="Move Left or Right" v-on:click="swap_horizontal()"><i class="material-icons" title="swap vertical position">swap_horiz</i></a>
-               <a href="javascript:void(0)" title="Move Up or Down" v-on:click="swap_vertical()"><i class="material-icons">swap_vert</i></a>
-           </div>
+                <a href="javascript:void(0)" title="Move Left or Right" v-on:click="swap_horizontal()"><i class="material-icons">swap_horiz</i></a>
+                <a href="javascript:void(0)" title="Move Up or Down" v-on:click="swap_vertical()"><i class="material-icons">swap_vert</i></a>
+            </div>
             <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
@@ -18,12 +18,12 @@
                 </div>
             </div>
             <h2 v-if="privateState.metaDesc" class="description">
-                {{{ privateState.metaDesc }}}<span v-if="sharedState.metric.config.label"> ({{ sharedState.metric.config.label.toLowerCase() }})</span>.
+                <span v-html="privateState.metaDesc"></span><span v-if="sharedState.metric.config.label"> ({{ sharedState.metric.config.label.toLowerCase() }})</span>.
                 <span v-if="sharedState.metric.config.raw_label">
-                    The County total is {{privateState.areaRaw}} {{{sharedState.metric.config.raw_label.toLowerCase()}}}.
+                    The County total is {{privateState.areaRaw}} <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>.
                 </span>
                 <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0">
-                    The selected total is {{privateState.selectedRaw}} {{{sharedState.metric.config.raw_label.toLowerCase()}}}.
+                    The selected total is {{privateState.selectedRaw}} <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>.
                 </span>
             </h2>
             <div class="legend">
@@ -36,22 +36,22 @@
                         <rect y="865.9" x="128.1" height="25" width="50" v-bind:style="{fill: this.sharedState.colors[3]}"/>
                         <rect width="50" height="25" x="177.6" y="865.9" v-bind:style="{fill: this.sharedState.colors[4]}"/>
                         <text x="-19.5" y="864.3" class="legendText">
-                          <tspan x="-19.5" y="864.3">{{sharedState.breaks[0] | abbrNumber }}</tspan>
+                          <tspan x="-19.5" y="864.3">{{ abbrNumber(sharedState.breaks[0]) }}</tspan>
                         </text>
                         <text y="864.4" x="28.6" class="legendText">
-                          <tspan y="864.4" x="28.6">{{sharedState.breaks[1] | abbrNumber }}</tspan>
+                          <tspan y="864.4" x="28.6">{{ abbrNumber(sharedState.breaks[1]) }}</tspan>
                         </text>
                         <text x="78.4" y="864.4" class="legendText">
-                          <tspan x="78.4" y="864.4">{{sharedState.breaks[2] | abbrNumber }}</tspan>
+                          <tspan x="78.4" y="864.4">{{ abbrNumber(sharedState.breaks[2]) }}</tspan>
                         </text>
                         <text y="864.4" x="128" class="legendText">
-                          <tspan y="864.4" x="128">{{sharedState.breaks[3] | abbrNumber }}</tspan>
+                          <tspan y="864.4" x="128">{{ abbrNumber(sharedState.breaks[3]) }}</tspan>
                         </text>
                         <text x="177.8" y="864.4" class="legendText">
-                          <tspan x="177.8" y="864.4">{{sharedState.breaks[4] | abbrNumber }}</tspan>
+                          <tspan x="177.8" y="864.4">{{ abbrNumber(sharedState.breaks[4]) }}</tspan>
                         </text>
                         <text y="864.3" x="225.8" class="legendText">
-                          <tspan y="864.3" x="225.8">{{sharedState.breaks[5] | abbrNumber }}</tspan>
+                          <tspan y="864.3" x="225.8">{{ abbrNumber(sharedState.breaks[5]) }}</tspan>
                         </text>
                     </g>
                 </svg>
@@ -68,16 +68,6 @@ import {calcValue, wValsToArray, sum} from '../modules/metric_calculations';
 
 export default {
     name: 'sc-toc',
-    filters: {
-        abbrNumber: function (value) {
-            let num = abbrNum(value, 1);
-            if (isNumeric(num)) {
-                return round(num, this.sharedState.metric.config.decimals);
-            } else {
-                return num;
-            }
-        }
-    },
     watch: {
         'sharedState.metric': 'processData',
         'sharedState.metadata': 'getMetaDesc',
@@ -85,6 +75,14 @@ export default {
         'sharedState.year': 'processYear'
     },
     methods: {
+        abbrNumber: function (value) {
+            let num = abbrNum(value, 1);
+            if (isNumeric(num)) {
+                return round(num, this.sharedState.metric.config.decimals);
+            } else {
+                return num;
+            }
+        },
         getMetaDesc: function() {
             this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>','').trim();
         },
@@ -146,7 +144,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 #toc.top {
     top: 3px;
 }
@@ -164,130 +162,131 @@ export default {
     width: 260px;
     background: white;
     box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
+}
 
-    .tocposition {
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 0.8em;
-        z-index: 20;
-        a {
-            color: #333;
-            opacity: 0.2;
-        }
-        a:hover {
-            opacity: 0.8;
-        }
-        .material-icons {
-            font-size: 18px;
-        }
-    }
+.tocposition {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8em;
+    z-index: 20;
+}
+.tocposition a {
+    color: #333;
+    opacity: 0.2;
+    transition: opacity 0.5s;
+}
+.tocposition a:hover {
+    opacity: 0.8;
+}
+.tocposition .material-icons {
+    font-size: 18px;
+}
 
-    .title, .description, .legend, .metricboxes {
-      position: relative;
-      z-index: 10;
-    }
+.title, .description, .legend, .metricboxes {
+  position: relative;
+  z-index: 10;
+}
 
-    .metricboxes {
-        padding: 10px 0 10px;
-        text-align: center;
-        display: flex;
-        flex-flow: row nowrap;
-    }
-    .metricbox {
-        width: 50%;
-        padding: 0 10px;
-        margin: 0 auto;
-        span {
-            display: block;
-            font-size: 12px;
-        }
-        .metrictype {
-            font-weight: bold;
-            font-size: 12px;
-            color: #727272;
-        }
-        .metricvalue {
-            margin-top: 3px;
-            font-weight: bold;
-            font-size: 19px;
-        }
-    }
+.metricboxes {
+    padding: 10px 0 10px;
+    text-align: center;
+    display: flex;
+    flex-flow: row nowrap;
+}
+.metricbox {
+    width: 50%;
+    padding: 0 10px;
+    margin: 0 auto;
 
-    .title {
-      padding: 20px 10px 15px;
-      border-bottom: 1px solid rgba(0,0,0,0.15);
-      word-wrap: break-word;
-      font-size: 16px;
-    }
+}
+.metricbox span {
+    display: block;
+    font-size: 12px;
+}
+.metrictype {
+    font-weight: bold;
+    font-size: 12px;
+    color: #727272;
+}
+.metricvalue {
+    margin-top: 3px;
+    font-weight: bold;
+    font-size: 19px !important;
+}
 
-    .description {
-      padding: 5px 10px 10px;
-      font-size: 12px;
-    }
+.title {
+  padding: 20px 10px 15px;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+  word-wrap: break-word;
+  font-size: 16px;
+}
 
-    h1, h2 {
-        margin: 0;
-        line-height: normal;
-    }
-    h1 {
-        font-weight: bold;
-        line-height: 20px;
-    }
+.description {
+    padding: 5px 10px 10px;
+    font-size: 12px;
+}
 
-    h2 {
-        font-weight: normal;
-    }
+h1, h2 {
+    margin: 0;
+    line-height: normal;
+}
+h1 {
+    font-weight: bold;
+    line-height: 20px;
+}
 
-    svg {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: 41px;
-        pointer-events: none; /* fix for ie11 click making legend disappear */
-    }
+h2 {
+    font-weight: normal;
+}
 
-    .legendText {
-        font-family:'Roboto', sans-serif;
-        font-size: 10px;
-        letter-spacing:0px;
-        line-height:100%;
-        stroke-width:1px;
-        text-align:center;
-        text-anchor:middle;
-        word-spacing:0px;
-    }
+svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 41px;
+    pointer-events: none; /* fix for ie11 click making legend disappear */
+}
 
-    .legendText:first-of-type {
-        text-align:start;
-        text-anchor:start;
-    }
-    .legendText:last-of-type {
-        text-align:end;
-        text-anchor:end;
-    }
+.legendText {
+    font-family:'Roboto', sans-serif;
+    font-size: 10px;
+    letter-spacing:0px;
+    line-height:100%;
+    stroke-width:1px;
+    text-align:center;
+    text-anchor:middle;
+    word-spacing:0px;
+}
 
+.legendText:first-of-type {
+    text-align:start;
+    text-anchor:start;
+}
+.legendText:last-of-type {
+    text-align:end;
+    text-anchor:end;
+}
+
+.background-print-img{
+    display: none;
+}
+
+@media print{
     .background-print-img{
+        display: block;
+        width:100%;
+        height: 99%;
+        position:absolute;
+        left: 0;
+        top: 0;
+    }
+    .tocposition {
         display: none;
-    }
-
-    @media print{
-        .background-print-img{
-            display: block;
-            position:absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .tocposition {
-            display: none;
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-
     }
 }
 
+@media all and (max-width: 480px) {
+
+}
 </style>
