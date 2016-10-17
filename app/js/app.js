@@ -87,5 +87,8 @@ window.onmessage = function(e){
         t = data.maptitle;
         document.querySelector("#maptitle").value = t;
     }
+    // if (data.summary) {
+    //     console.log(data.summary);
+    // }
     setEmbed(setURL(m, y, b, s, t), container);
 };

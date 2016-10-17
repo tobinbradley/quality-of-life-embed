@@ -1,6 +1,7 @@
 import dataConfig from '../../../data/config/data';
 import axios from 'axios';
 import jenksBreaks from './jenksbreaks';
+import dataSummary from './datasummary';
 
 export default function fetchData(appState, metric) {
     appState.metricId = metric;
@@ -31,6 +32,11 @@ export default function fetchData(appState, metric) {
                 appState.year = years[years.length - 1];
             }
             appState.breaks = jenksBreaks(data.data.map, years, nKeys, 5);
+
+            // send back summary data
+            if (window!=window.top) {
+                parent.postMessage({"summary": dataSummary(appState)}, "*");
+            }
         });
 
     // fetch metadata

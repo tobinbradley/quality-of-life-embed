@@ -82,6 +82,11 @@ window.onmessage = function(e){
     if (e.data.title) {
         appState.title = e.data.title;
     }
+    if (e.data.metric) {
+        appState.title = dataConfig[`m${e.data.metric}`].title;
+        fetchData(appState, e.data.metric);
+        parent.postMessage({"maptitle": appState.title}, "*");
+    }
 };
 if (window!=window.top) {
     parent.postMessage({"maptitle": mapTitle}, "*");
