@@ -24,8 +24,10 @@ export default {
             let map = _this.privateState.map;
 
             // disable map rotation using right click + drag and touch
-            map.dragRotate.disable();
-            map.touchZoomRotate.disableRotation();
+            if (_this.privateState.pitch === false) {
+                map.dragRotate.disable();
+                map.touchZoomRotate.disableRotation();
+            }
 
             // send new bounds to parent on move end
             if (window!=window.top) {
@@ -54,7 +56,22 @@ export default {
                         _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
                     });
+            });
 
+            map.on('rotate', function(e) {
+                if (map.getPitch() > 25) {
+                    map.setPaintProperty("neighborhoods-fill", 'fill-extrude-height',
+                    {
+                        'type': 'identity',
+                        'property': 'height'
+                    });
+                } else {
+                    map.setPaintProperty("neighborhoods-fill", 'fill-extrude-height',
+                    {
+                        'type': 'identity',
+                        'property': ''
+                    });
+                }
             });
 
         },
@@ -116,7 +133,8 @@ export default {
                 'layout': {},
                 'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-opacity': 1
+                    'fill-opacity': 1,
+                    'fill-extrude-base': 0
                 }
             }, 'neighborhoods-line');
 

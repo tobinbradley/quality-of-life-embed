@@ -31,6 +31,12 @@ webglCheck();  // Make sure WebGL is in da house
 //     y   year
 //     s   selected
 //     t   map title
+//     pitch    whether map can pitch or not (default not)
+let pitch = false;
+if (getURLParameter('pitch') !== null) {
+    pitch = true;
+}
+
 let bounds = [];
 if (getURLParameter('b') !== null) {
     bounds = getURLParameter('b').split(',');
@@ -127,6 +133,7 @@ MapGL.data = function() {
                 minZoom: mapConfig.minZoom,
                 preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
             },
+            pitch: pitch,
             mapLoaded: false,
             metricId: null,
             geoJSON: null,
