@@ -37,6 +37,12 @@ if (getURLParameter('pitch') !== null) {
     pitch = true;
 }
 
+let smaxzoom = null;
+if (getURLParameter('smaxzoom') !== null) {
+    smaxzoom = getURLParameter('smaxzoom');
+}
+
+
 let bounds = [];
 if (getURLParameter('b') !== null) {
     bounds = getURLParameter('b').split(',');
@@ -134,6 +140,7 @@ MapGL.data = function() {
                 preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
             },
             pitch: pitch,
+            smaxzoom: smaxzoom,
             mapLoaded: false,
             metricId: null,
             geoJSON: null,

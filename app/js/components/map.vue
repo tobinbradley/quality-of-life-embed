@@ -218,7 +218,12 @@ export default {
                 }
             });
 
-            this.privateState.map.fitBounds(bounds, {padding: 100});
+            let flyOptions = {padding: 100};
+            if (this.privateState.smaxzoom) {
+                flyOptions = {padding: 100, maxZoom: this.privateState.smaxzoom};
+            }
+
+            this.privateState.map.fitBounds(bounds, flyOptions);
         }
     },
     mounted: function () {
