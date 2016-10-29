@@ -65,12 +65,24 @@ export default {
                         'type': 'identity',
                         'property': 'height'
                     });
+                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-extrude-height',
+                    {
+                        'type': 'identity',
+                        'property': 'height'
+                    });
+                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-opacity', 0.8);
                 } else {
                     map.setPaintProperty("neighborhoods-fill", 'fill-extrude-height',
                     {
                         'type': 'identity',
                         'property': ''
                     });
+                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-extrude-height',
+                    {
+                        'type': 'identity',
+                        'property': ''
+                    });
+                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-opacity', 0);
                 }
             });
 
@@ -125,6 +137,18 @@ export default {
                     }
                 }
             }, 'water_label');
+            map.addLayer({
+                'id': 'neighborhoods-fill-selected',
+                'type': 'fill',
+                'source': 'neighborhoods',
+                'layout': {},
+                "filter": ["in", "id", "-999999"],
+                'paint': {
+                    'fill-color': '#ba00e4',
+                    'fill-opacity': 0,
+                    'fill-extrude-base': 0
+                }
+            }, 'water_label');
 
             map.addLayer({
                 'id': 'neighborhoods-fill',
@@ -161,6 +185,7 @@ export default {
                 }
 
                 map.setFilter("neighborhoods-line-selected", filter);
+                map.setFilter("neighborhoods-fill-selected", filter);
             }
         },
         styleNeighborhoods: function() {
