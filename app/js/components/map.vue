@@ -1,5 +1,11 @@
 <template lang="html">
-    <div id="map"></div>
+    <div class="" style="position: relative; width: 100%; height: 100%">
+        <div id="map"></div>
+        <button v-show="privateState.pitch" class="mdl-button" id="btnPitch" v-on:click="togglePitch()">
+            2D/3D
+        </button>
+    </div>
+
 </template>
 
 <script>
@@ -86,6 +92,14 @@ export default {
                 }
             });
 
+        },
+        togglePitch: function() {
+            let _this = this;
+            if (this.privateState.map.getPitch() === 0) {
+                this.privateState.map.easeTo({pitch: 75, bearing: -40, zoom: 10});
+            } else {
+                this.privateState.map.easeTo({pitch: 0, bearing: 0});
+            }
         },
         initNeighborhoods: function() {
             let map = this.privateState.map;
@@ -259,4 +273,10 @@ export default {
 </script>
 
 <style lang="css">
+    #btnPitch {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background-color: rgba(158,158,158, 0.30);
+    }
 </style>
