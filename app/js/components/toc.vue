@@ -2,7 +2,7 @@
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-            <div class="tocposition">
+            <div class="tocposition" v-if="privateState.positionToggle">
                 <a href="javascript:void(0)" title="Move Left or Right" v-on:click="swap_horizontal()"><i class="material-icons">swap_horiz</i></a>
                 <a href="javascript:void(0)" title="Move Up or Down" v-on:click="swap_vertical()"><i class="material-icons">swap_vert</i></a>
             </div>
@@ -216,7 +216,7 @@ export default {
 }
 
 .title {
-  padding: 20px 10px 15px;
+  padding: 15px 10px 10px;
   border-bottom: 1px solid rgba(0,0,0,0.15);
   word-wrap: break-word;
   font-size: 16px;

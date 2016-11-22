@@ -119,7 +119,8 @@ ToC.data = function() {
             selected: null,
             area: null,
             selectedRaw: null,
-            areaRaw: null
+            areaRaw: null,
+            positionToggle: false
         }
     };
 };
@@ -131,7 +132,8 @@ MapGL.data = function() {
             locate: null,
             mapOptions: {
                 container: 'map',
-                style: mapConfig.style,
+                //style: mapConfig.style,
+                style: './style/osm-liberty.json',
                 attributionControl: false,
                 zoom: mapConfig.zoomEmbed,
                 center: mapConfig.centerEmbed,

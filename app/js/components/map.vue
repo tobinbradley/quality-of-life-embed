@@ -66,29 +66,11 @@ export default {
 
             map.on('rotate', function(e) {
                 if (map.getPitch() > 25) {
-                    map.setPaintProperty("neighborhoods-fill", 'fill-extrude-height',
-                    {
-                        'type': 'identity',
-                        'property': 'height'
-                    });
-                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-extrude-height',
-                    {
-                        'type': 'identity',
-                        'property': 'height'
-                    });
-                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-opacity', 0.8);
+                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'visible');
+                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'visible');
                 } else {
-                    map.setPaintProperty("neighborhoods-fill", 'fill-extrude-height',
-                    {
-                        'type': 'identity',
-                        'property': ''
-                    });
-                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-extrude-height',
-                    {
-                        'type': 'identity',
-                        'property': ''
-                    });
-                    map.setPaintProperty("neighborhoods-fill-selected", 'fill-opacity', 0);
+                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'none');
+                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'none');
                 }
             });
 
@@ -153,14 +135,19 @@ export default {
             }, 'water_label');
             map.addLayer({
                 'id': 'neighborhoods-fill-selected',
-                'type': 'fill',
+                'type': 'fill-extrusion',
                 'source': 'neighborhoods',
-                'layout': {},
+                'layout': {
+                    'visibility': 'none'
+                },
                 "filter": ["in", "id", "-999999"],
                 'paint': {
-                    'fill-color': '#ba00e4',
-                    'fill-opacity': 0,
-                    'fill-extrude-base': 0
+                    'fill-extrusion-color': '#ba00e4',
+                    'fill-extrusion-opacity': 0.7,
+                    'fill-extrusion-height': {
+                        'type': 'identity',
+                        'property': 'height'
+                    }
                 }
             }, 'water_label');
 
@@ -168,13 +155,27 @@ export default {
                 'id': 'neighborhoods-fill',
                 'type': 'fill',
                 'source': 'neighborhoods',
-                'layout': {},
                 'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-opacity': 1,
-                    'fill-extrude-base': 0
                 }
             }, 'neighborhoods-line');
+
+            map.addLayer({
+                'id': 'neighborhoods-fill-extrude',
+                'type': 'fill-extrusion',
+                'source': 'neighborhoods',
+                'layout': {
+                    'visibility': 'none'
+                },
+                'filter': ['!=', 'choropleth', 'null'],
+                'paint': {
+                    'fill-extrusion-opacity': 0.7,
+                    'fill-extrusion-height': {
+                        'type': 'identity',
+                        'property': 'height'
+                    }
+                }
+            }, 'neighborhoods-fill-selected');
 
         },
         selectNeighborhoods: function() {
@@ -218,6 +219,7 @@ export default {
                     ]
                 };
                 map.setPaintProperty("neighborhoods-fill", 'fill-color', fillColor);
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', fillColor);
         },
         updateChoropleth: function() {
             let _this = this;
