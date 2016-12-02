@@ -35,14 +35,6 @@ export default {
                 map.touchZoomRotate.disableRotation();
             }
 
-            // send new bounds to parent on move end
-            if (window!=window.top) {
-                map.on('moveend', function() {
-                    let bounds = map.getBounds();
-                    parent.postMessage({"bounds": `${bounds._sw.lng.toFixed(4)},${bounds._sw.lat.toFixed(4)},${bounds._ne.lng.toFixed(4)},${bounds._ne.lat.toFixed(4)}`},"*");
-                 });
-            }
-
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
                 axios.get('data/geography.geojson.json')
@@ -50,13 +42,18 @@ export default {
                         _this.privateState.mapLoaded = true;
                         _this.privateState.geoJSON = response.data;
 
-                        if (_this.privateState.bounds.length === 4) {
-                            let bounds = _this.privateState.bounds;
-                            map.fitBounds([[bounds[0],bounds[3]], [bounds[2],bounds[1]]]);
+                        // zoom to stuff;
+                        let bounds;
+                        let flyOptions = {padding: 50};
+                        if (_this.sharedState.selected.length === 0) {
+                            bounds = _this.getFullBounds();
+                        } else {
+                            bounds = _this.getSelectedBounds();
+                            if (_this.privateState.smaxzoom) {
+                                flyOptions.maxZoom = _this.privateState.smaxzoom;
+                            }
                         }
-                        else if (_this.sharedState.selected.length > 0) {
-                            _this.zoomNeighborhoods();
-                        }
+                        _this.privateState.map.fitBounds(bounds, flyOptions);
 
                         _this.initNeighborhoods();
                         _this.selectNeighborhoods();
@@ -245,7 +242,21 @@ export default {
             let geoObj = geojsonDataMerge(_this.privateState.geoJSON, _this.sharedState.metric.data.map, _this.sharedState.year);
             return geoObj;
         },
-        zoomNeighborhoods: function () {
+        getFullBounds: function() {
+            let bounds = new mapboxgl.LngLatBounds();
+            let _this = this;
+
+            this.privateState.geoJSON.features.forEach(function(feature) {
+                feature.geometry.coordinates.forEach(function(coord) {
+                    coord.forEach(function(el) {
+                        bounds.extend(el);
+                    })
+                });
+            });
+
+            return bounds;
+        },
+        getSelectedBounds: function() {
             let bounds = new mapboxgl.LngLatBounds();
             let _this = this;
 
@@ -259,12 +270,7 @@ export default {
                 }
             });
 
-            let flyOptions = {padding: 100};
-            if (this.privateState.smaxzoom) {
-                flyOptions = {padding: 100, maxZoom: this.privateState.smaxzoom};
-            }
-
-            this.privateState.map.fitBounds(bounds, flyOptions);
+            return bounds;
         }
     },
     mounted: function () {

@@ -26,7 +26,6 @@ import MapGL from './components/map.vue';
 webglCheck();  // Make sure WebGL is in da house
 
 // Get URL arguments if passed
-//     b   bounds sw.lng, sw.lat, ne.lng, le.lat
 //     m   metric number
 //     y   year
 //     s   selected
@@ -43,10 +42,6 @@ if (getURLParameter('smaxzoom') !== null) {
 }
 
 
-let bounds = [];
-if (getURLParameter('b') !== null) {
-    bounds = getURLParameter('b').split(',');
-}
 // get random metric if none provided and validate provided
 let keys = Object.keys(dataConfig);
 let metricId = keys[Math.floor(Math.random() * keys.length)].replace('m', '');
@@ -69,6 +64,10 @@ if (getURLParameter('t') !== null) {
     mapTitle = getURLParameter('t');
 } else if (dataConfig[`m${metricId}`]) {
     mapTitle = dataConfig[`m${metricId}`].title;
+}
+let tocp = false;
+if (getURLParameter('tocp') !== null) {
+    tocp = true;
 }
 
 // the shared state between components
@@ -120,7 +119,7 @@ ToC.data = function() {
             area: null,
             selectedRaw: null,
             areaRaw: null,
-            positionToggle: false
+            positionToggle: tocp
         }
     };
 };
@@ -145,8 +144,7 @@ MapGL.data = function() {
             smaxzoom: smaxzoom,
             mapLoaded: false,
             metricId: null,
-            geoJSON: null,
-            bounds: bounds
+            geoJSON: null
         }
     };
 };
