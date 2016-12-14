@@ -131,8 +131,7 @@ MapGL.data = function() {
             locate: null,
             mapOptions: {
                 container: 'map',
-                //style: mapConfig.style,
-                style: './style/osm-liberty.json',
+                style: mapConfig.style,                
                 attributionControl: false,
                 zoom: mapConfig.zoomEmbed,
                 center: mapConfig.centerEmbed,
@@ -160,6 +159,6 @@ new Vue({
 
 
 // attribution link
-if (selected.length > 0 && document.querySelector('.attribution a')) {
+if (document.querySelector('.attribution a')) {
     document.querySelector('.attribution a').href = `${siteConfig.qoldashboardURL}?m=m${metricId}&n=${selected.join(',')}`;
 }
