@@ -18,7 +18,6 @@ let s = [];
 let m = '';
 let y = 2015;
 let t = '';
-let container = document.querySelector("textarea");
 
 
 // Get URL arguments if passed
@@ -46,7 +45,6 @@ if (getURLParameter('t') !== null) {
 
 // set iframe src
 document.querySelector('.embed iframe').src = setURL(m, y, s, t);
-setEmbed(setURL(m, y, s, t), container);
 
 // URL for the iframe
 function setURL(m, y, s, t) {
@@ -54,16 +52,10 @@ function setURL(m, y, s, t) {
     return url;
 }
 
-// iframe tag for copying by user
-function setEmbed(url, con) {
-    con.value = `<iframe src="${url}" style="width: 500px; height: 500px; border: 1px solid #595959"></iframe>`;
-}
-
 // parent/iframe communications
 window.titleChange = function (title) {
     t = title;
     document.querySelector("iframe").contentWindow.postMessage({"title": t}, '*');
-    setEmbed(setURL(m, y, s, t), container);
 };
 window.onmessage = function(e){
     let data = e.data;
@@ -71,5 +63,4 @@ window.onmessage = function(e){
         t = data.maptitle;
         document.querySelector("#maptitle").value = t;
     }
-    setEmbed(setURL(m, y, s, t), container);
 };
