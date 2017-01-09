@@ -30,18 +30,18 @@ webglCheck();  // Make sure WebGL is in da house
 //     y   year
 //     s   selected
 //     t   map title
-//     pitch    whether map can pitch or not (default not)
+//     pitch    whether map can pitch or not (default false)
+//     smaxzoom  sets maximum zoom level when flying to selected neighborhoods
+//     tocp set whether TOC position icons appear (default false)
+
 let pitch = false;
 if (getURLParameter('pitch') !== null) {
     pitch = true;
 }
-
 let smaxzoom = null;
 if (getURLParameter('smaxzoom') !== null) {
     smaxzoom = getURLParameter('smaxzoom');
 }
-
-
 // get random metric if none provided and validate provided
 let keys = Object.keys(dataConfig);
 let metricId = keys[Math.floor(Math.random() * keys.length)].replace('m', '');
@@ -103,8 +103,6 @@ if (window!=window.top) {
     parent.postMessage({"maptitle": mapTitle}, "*");
 }
 
-
-//window.appData = appData; // for debugging etc.
 
 // grab initial data
 fetchData(appState, metricId);
