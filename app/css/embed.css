@@ -27,6 +27,14 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+html, body {
+    color: #555;
+    font-family: "Helvetica Neue", "Calibri", "Liberation Sans", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.02em;
+}
+
 .container {
     position: absolute;
     top: 0;
@@ -58,4 +66,5 @@ html, body {
     #map {
         border: 1px solid black;
     }
+    a:link:after, a:visited:after { content:""; }
 }
