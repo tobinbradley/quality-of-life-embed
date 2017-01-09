@@ -19,12 +19,19 @@
             </div>
             <h2 v-if="privateState.metaDesc" class="description">
                 <span v-html="privateState.metaDesc"></span><span v-if="sharedState.metric.config.label"> ({{ sharedState.metric.config.label.toLowerCase() }})</span>.
-                <span v-if="sharedState.metric.config.raw_label">
+                <span v-if="sharedState.metric.config.raw_label">Total <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>: </span>
+                <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0" style="font-weight: bold; white-space: nowrap;">
+                    Selected: {{privateState.selectedRaw}},  
+                </span>
+                <span v-if="sharedState.metric.config.raw_label" style="font-weight: bold; white-space: nowrap;">
+                    County: {{privateState.areaRaw}}
+                </span>
+                <!--<span v-if="sharedState.metric.config.raw_label">
                     The County total is {{privateState.areaRaw}} <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>.
                 </span>
                 <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0">
                     The selected total is {{privateState.selectedRaw}} <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>.
-                </span>
+                </span>-->
             </h2>
             <div class="legend">
                 <svg  v-if="sharedState.breaks" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 248.4 39.2"id="maplegend" role="img" aria-labelledby="svgTitle">
