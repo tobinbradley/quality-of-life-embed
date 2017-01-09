@@ -35,29 +35,10 @@
 <body>
     <div class="container">
         <header>
-            <div class="print">
-                <h3>Print</h3>
-                <button onclick="window.print();"><img src="img/ic_print_48px.svg" style="width: 48px; height: 48px" alt="print button"></button>
-            </div>
-
-            <div class="form ">
-                <h3>Embed</h3>
-                <!-- <label for="mapmetric">Variable</label>
-                <select id="mapmetric">
-                    {{#each categories}}
-                    <optgroup label="{{this}}">
-                            {{#each ../dataConfig}}
-                            {{#ifCond category ../this }}
-                            <option value="{{metric}}">{{title}}</option>
-                            {{/ifCond}}
-                            {{/each}}
-                    </optgroup>
-                    {{/each}}
-                </select> -->
+            <div>
                 <label for="maptitle">Title</label>
                 <input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
-                <label for="embedCode">Drop this in your web page</label>
-                <textarea name="embedCode" rows="3" aria-label="embed iframe code"></textarea>
+                <button class="button" onclick="window.print();">PRINT</button>                
             </div>
             <div style="clear:both"></div>
         </header>
