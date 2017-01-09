@@ -21,6 +21,14 @@ ____________________________________
     box-sizing: border-box;
 }
 
+html, body {
+    color: #555;
+    font-family: "Helvetica Neue", "Calibri", "Liberation Sans", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.02em;
+}
+
 body {
     background: #ccc;
 }
@@ -30,7 +38,6 @@ header {
     background: white;
     padding: 20px;
     margin: 20px 0;
-    min-height: 175px;
     box-shadow: 0 0 3px #666,0 10px 6px -6px #666;
 }
 
@@ -67,16 +74,31 @@ header {
 
 textarea, input, select {
     width: 100%;
-    padding: 3px;
-    font-size: 0.8em;
+    padding: 5px 10px;
+    font-size: 1em;
     border: 1px solid #a2a2a2;
 }
 input, select {
     margin-bottom: 10px;
 }
 label {
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: #3f51b5;
+}
+
+ /* Button */
+.button {
+    background-color: #CBCDCB; /* Green */
+    border: none;
+    color: #555;
+    padding: 7px 12px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 6px;
+    box-shadow: 1px 1px 3px #666;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 
