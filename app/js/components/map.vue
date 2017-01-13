@@ -1,9 +1,6 @@
 <template lang="html">
     <div class="" style="position: relative; width: 100%; height: 100%">
         <div id="map"></div>
-        <button v-show="privateState.pitch" class="mdl-button" id="btnPitch" v-on:click="togglePitch()">
-            2D/3D
-        </button>
     </div>
 
 </template>
@@ -28,6 +25,10 @@ export default {
             _this.privateState.map = new mapboxgl.Map(_this.privateState.mapOptions);
 
             let map = _this.privateState.map;
+
+            // add nav control
+            var nav = new mapboxgl.NavigationControl();
+            map.addControl(nav, 'top-right');
 
             // disable map rotation using right click + drag and touch
             if (_this.privateState.pitch === false) {
