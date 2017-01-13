@@ -48,7 +48,7 @@ document.querySelector('.embed iframe').src = setURL(m, y, s, t);
 
 // URL for the iframe
 function setURL(m, y, s, t) {
-    let url = `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&s=${s}&t=${encodeURI(t)}&tocp=true`;
+    let url = `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&s=${s}&t=${encodeURI(t)}&tocp=true&pitch=false`;
     return url;
 }
 
