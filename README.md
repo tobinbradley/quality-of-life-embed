@@ -33,21 +33,10 @@ All URL arguments are optional. If no metric is passed, a random metric appears.
 
 Metrics and years are validated. If a bad metric ID is passed, a random metric is selected. If an unavailable year is passed, the most recent year is selected.
 
-*   *m*: metric id (integer)
+*   *m*: metric id (integer), if none passed will select random
 *   *t*: title
-*   *b*: map bounds (sw.lng, sw.lat, ne.lng, ne.lat)
 *   *s*: selected geography (id1, id2, ...)
-*   *y*: metric year (integer)
-*   *pitch*: allow 3d pitching of map and show 2d/3d button (default false)
+*   *y*: metric year (integer), if none passed will get most recent year available
+*   *pitch*: allow 3d pitching of map (default true)
 *   *smaxzoom*: set maximum zoom level when zooming in to selected geography
 *   *tocp*: show table of contents positioning arrows (default false)
-
-
-// Get URL arguments if passed
-//     m   metric number
-//     y   year
-//     s   selected
-//     t   map title
-//     pitch    whether map can pitch or not (default false)
-//     smaxzoom  sets maximum zoom level when flying to selected neighborhoods
-//     tocp set whether TOC position icons appear (default false)
