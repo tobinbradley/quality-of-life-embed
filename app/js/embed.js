@@ -34,9 +34,9 @@ webglCheck();  // Make sure WebGL is in da house
 //     smaxzoom  sets maximum zoom level when flying to selected neighborhoods
 //     tocp set whether TOC position icons appear (default false)
 
-let pitch = false;
-if (getURLParameter('pitch') !== null) {
-    pitch = true;
+let pitch = true;
+if (getURLParameter('pitch') === 'false') {
+    pitch = false;
 }
 let smaxzoom = null;
 if (getURLParameter('smaxzoom') !== null) {
@@ -66,7 +66,7 @@ if (getURLParameter('t') !== null) {
     mapTitle = dataConfig[`m${metricId}`].title;
 }
 let tocp = false;
-if (getURLParameter('tocp') !== null) {
+if (getURLParameter('tocp') === 'true') {
     tocp = true;
 }
 
