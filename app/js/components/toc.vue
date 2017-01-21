@@ -5,7 +5,7 @@
             <div class="tocposition" v-if="privateState.positionToggle">                
                 <a href="javascript:void(0)" title="Move Table of Contents" v-on:click="position()"><i class="material-icons">zoom_out_map</i></a>
             </div>
-            <h1 class="title">{{ sharedState.metric.config.title }}, {{ sharedState.year }}</h1>
+            <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
                     <span class="metrictype">SELECTED</span>
@@ -219,7 +219,7 @@ export default {
 }
 
 .title {
-  padding: 14px 10px 7px;
+  padding: 10px 10px 7px;
   border-bottom: 1px solid rgba(0,0,0,0.15);
   word-wrap: break-word;
   font-size: 15px;
