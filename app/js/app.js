@@ -54,8 +54,7 @@ function setURL(m, y, s, t) {
 
 // parent/iframe communications
 window.titleChange = function (title) {
-    t = title;
-    document.querySelector("iframe").contentWindow.postMessage({"title": t}, '*');
+    document.querySelector("iframe").contentWindow.postMessage({"title": title}, '*');
 };
 window.onmessage = function(e){
     let data = e.data;
