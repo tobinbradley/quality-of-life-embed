@@ -2,7 +2,6 @@
     <div class="" style="position: relative; width: 100%; height: 100%">
         <div id="map"></div>
     </div>
-
 </template>
 
 <script>
@@ -17,7 +16,8 @@ export default {
     watch: {
         'sharedState.selected': 'selectNeighborhoods',
         'sharedState.breaks': 'updateBreaks',
-        'sharedState.year': 'updateYear'
+        'sharedState.year': 'updateYear',
+        'sharedState.zoomSelected': 'zoomSelected'
     },
     methods: {
         initMap: function() {
@@ -28,13 +28,7 @@ export default {
 
             // add nav control
             var nav = new mapboxgl.NavigationControl();
-            map.addControl(nav, 'top-right');
-
-            // disable map rotation using right click + drag and touch
-            if (_this.privateState.pitch === false) {
-                map.dragRotate.disable();
-                map.touchZoomRotate.disableRotation();
-            }
+            map.addControl(nav, 'top-right');            
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
@@ -43,22 +37,10 @@ export default {
                         _this.privateState.mapLoaded = true;
                         _this.privateState.geoJSON = response.data;
 
-                        // zoom to stuff;
-                        let bounds;
-                        let flyOptions = {padding: 50};
-                        if (_this.sharedState.selected.length === 0) {
-                            bounds = _this.getFullBounds();
-                        } else {
-                            bounds = _this.getSelectedBounds();
-                            if (_this.privateState.smaxzoom) {
-                                flyOptions.maxZoom = _this.privateState.smaxzoom;
-                            }
-                        }
-                        _this.privateState.map.fitBounds(bounds, flyOptions);
-
                         _this.initNeighborhoods();
                         _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
+                        _this.zoomSelected(); 
                     });
             });
 
@@ -72,15 +54,54 @@ export default {
                 }
             });
 
-        },
-        togglePitch: function() {
-            let _this = this;
-            if (this.privateState.map.getPitch() === 0) {
-                this.privateState.map.easeTo({pitch: 75, bearing: -40, zoom: 10});
-            } else {
-                this.privateState.map.easeTo({pitch: 0, bearing: 0});
+            // on feature click add or remove from selected set
+            map.on('click', function (e) {
+                var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+                if (!features.length) {
+                    return;
+                }
+
+                let feature = features[0];
+                let featureIndex = _this.sharedState.selected.indexOf(feature.properties.id);
+
+                if (featureIndex === -1) {
+                    _this.sharedState.selected.push(feature.properties.id);
+                } else {
+                    _this.sharedState.selected.splice(featureIndex, 1);
+                }
+
+                // post back to parent
+                parent.postMessage({"selected": _this.sharedState.selected}, "*");
+            });
+
+            // fix for popup cancelling click event on iOS
+            let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (!iOS) {
+                let popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false
+                });
+                // show feature info on mouse move
+                map.on('mousemove', function (e) {
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+                    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+                    if (!features.length) {
+                        popup.remove();
+                        return;
+                    }
+
+                    let feature = features[0];
+                    let val = prettyNumber(feature.properties.choropleth, _this.sharedState.metric.config.decimals, _this.sharedState.metric.config.prefix, _this.sharedState.metric.config.suffix);
+
+                    popup.setLngLat(map.unproject(e.point))
+                        .setHTML(`<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 1.2em; margin: 0; padding: 0; line-height: 1em; font-weight: bold;">Neighborhood ${feature.properties.id}</h1>${val}</div>`)
+                        .addTo(map);
+
+                });
             }
-        },
+
+        },        
         initNeighborhoods: function() {
             let map = this.privateState.map;
             let _this = this;
@@ -167,7 +188,7 @@ export default {
                 },
                 'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-extrusion-opacity': 0.8,
+                    'fill-extrusion-opacity': 0.9,
                     'fill-extrusion-height': {
                         'type': 'identity',
                         'property': 'height'
@@ -177,6 +198,7 @@ export default {
 
         },
         selectNeighborhoods: function() {
+            let _this = this;
             if (this.privateState.mapLoaded === true) {
                 let map = this.privateState.map;
                 let selected = this.sharedState.selected;
@@ -199,7 +221,19 @@ export default {
 
                 map.setFilter("neighborhoods-line-selected", filter);
                 map.setFilter("neighborhoods-fill-selected", filter);
+
             }
+        },
+        zoomSelected: function() {
+            let bounds;
+            let _this = this;
+            let flyOptions = {padding: 50};
+            if (_this.sharedState.selected.length === 0) {
+                bounds = _this.getFullBounds();
+            } else {
+                bounds = _this.getSelectedBounds();
+            }
+            _this.privateState.map.fitBounds(bounds, flyOptions);
         },
         styleNeighborhoods: function() {
                 let map = this.privateState.map;
@@ -281,11 +315,3 @@ export default {
 };
 </script>
 
-<style lang="css">
-    #btnPitch {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        background-color: rgba(158,158,158, 0.30);
-    }
-</style>

@@ -2,16 +2,21 @@ import {calcValue} from './metric_calculations';
 import {prettyNumber} from './number_format';
 import selectGroups from '../../../data/config/selectgroups';
 
+
 function dataSummary(appState) {
     let summary = {
-        years: [],
-        values: {}
+        years: appState.metric.years,        
+        values: {
+            'Jurisdiction': {},
+            'City Council': {},
+            'County Commission': {}
+        }
     };
 
-    summary.years = appState.metric.years;
-
     // Geography Groups
-    let selectGroupKeys = Object.keys(selectGroups.Jurisdiction);
+    let selectGroupKeys;
+
+    selectGroupKeys = Object.keys(selectGroups.Jurisdiction);
     for (let g = 0; g < selectGroupKeys.length; g++) {
         let groupArray = [];
         let keys = selectGroups.Jurisdiction[selectGroupKeys[g]];
@@ -20,7 +25,31 @@ function dataSummary(appState) {
             groupVal = prettyNumber(groupVal, appState.metric.config.decimals, appState.metric.config.prefix, appState.metric.config.suffix);
             groupArray.push(groupVal);
         }
-        summary.values[selectGroupKeys[g]] = groupArray;
+        summary.values["Jurisdiction"][selectGroupKeys[g]] = groupArray;
+    }
+
+    selectGroupKeys = Object.keys(selectGroups["City Council"]);
+    for (let g = 0; g < selectGroupKeys.length; g++) {
+        let groupArray = [];
+        let keys = selectGroups["City Council"][selectGroupKeys[g]];
+        for (let i = 0; i < appState.metric.years.length; i++) {
+            let groupVal = calcValue(appState.metric.data, appState.metric.config.type, appState.metric.years[i], keys);
+            groupVal = prettyNumber(groupVal, appState.metric.config.decimals, appState.metric.config.prefix, appState.metric.config.suffix);
+            groupArray.push(groupVal);
+        }
+        summary.values["City Council"][selectGroupKeys[g]] = groupArray;
+    }
+
+    selectGroupKeys = Object.keys(selectGroups["County Commission"]);
+    for (let g = 0; g < selectGroupKeys.length; g++) {
+        let groupArray = [];
+        let keys = selectGroups["County Commission"][selectGroupKeys[g]];
+        for (let i = 0; i < appState.metric.years.length; i++) {
+            let groupVal = calcValue(appState.metric.data, appState.metric.config.type, appState.metric.years[i], keys);
+            groupVal = prettyNumber(groupVal, appState.metric.config.decimals, appState.metric.config.prefix, appState.metric.config.suffix);
+            groupArray.push(groupVal);
+        }
+        summary.values["County Commission"][selectGroupKeys[g]] = groupArray;
     }
 
     // County

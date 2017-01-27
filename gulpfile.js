@@ -99,7 +99,7 @@ gulp.task('template', function(cb) {
         return options.inverse(this);
     });
 
-    _.each(['embed.html', 'index.html'], function (src) {
+    _.each(['index.html'], function (src) {
         let source = fs.readFileSync(`./app/${src}`, 'utf-8').toString();
         let template = handlebars.compile(source);
         let html = template(data);
@@ -123,7 +123,7 @@ gulp.task('move', function() {
 
 // JavaScript
 gulp.task('js-app', function() {
-    _.each(['app.js', 'embed.js'], function(file) {
+    _.each(['app.js'], function(file) {
         browserify(`./app/js/${file}`)
             .transform(vueify)
             .transform(babelify)
@@ -142,7 +142,7 @@ gulp.task('js-app', function() {
 
 // CSS
 gulp.task("css", function() {
-    return gulp.src(['./app/css/main.css', './app/css/embed.css'])
+    return gulp.src(['./app/css/main.css'])
         .pipe(sourcemaps.init())
         .pipe(postcss([
             require("postcss-import")(),

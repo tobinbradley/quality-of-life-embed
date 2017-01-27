@@ -2,13 +2,10 @@
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-            <div class="tocposition" v-if="privateState.positionToggle">                
-                <a href="javascript:void(0)" title="Move Table of Contents" v-on:click="position()"><i class="material-icons">zoom_out_map</i></a>
-            </div>
             <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
-                    <span class="metrictype">SELECTED</span>
+                    <span class="metrictype">NEIGHBORHOOD<span v-if="sharedState.selected.length > 1">S</span></span>
                     <span class="metricvalue">{{ privateState.selected }}</span>                    
                 </div>
                 <div class="metricbox">
@@ -18,12 +15,11 @@
             </div>
             <h2 v-if="privateState.metaDesc" class="description">
                 <span v-html="privateState.metaDesc"></span><span v-if="sharedState.metric.config.label"> ({{ sharedState.metric.config.label.toLowerCase() }})</span>.                
-                <span v-if="sharedState.metric.config.raw_label"><br><br>Total <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>: <br></span>
-                <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0" style="white-space: nowrap;">
-                    Selected: {{privateState.selectedRaw}} &bull;   
+                <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0">
+                    The total Neighborhood {{sharedState.metric.config.raw_label.toLowerCase()}} is {{privateState.selectedRaw}}.
                 </span>
-                <span v-if="sharedState.metric.config.raw_label" style="white-space: nowrap;">
-                    County: {{privateState.areaRaw}}
+                <span v-if="sharedState.metric.config.raw_label">
+                    The total County {{sharedState.metric.config.raw_label.toLowerCase()}} is {{privateState.areaRaw}}.
                 </span>
             </h2>
             <div class="legend">
@@ -148,42 +144,14 @@ export default {
 </script>
 
 <style lang="css" scoped>
-#toc.top {
-    top: 3px;
-}
-#toc.bottom {
-    bottom: 3px;
-}
-#toc.left {
-    left: 3px;
-}
-#toc.right {
-    right: 3px;
-}
+
 #toc {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 260px;
     background: white;
-    box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
-}
-
-.tocposition {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 0.8em;
-    z-index: 20;
-}
-.tocposition a {
-    color: #333;
-    opacity: 0.2;
-    transition: opacity 0.5s;
-}
-.tocposition a:hover {
-    opacity: 0.8;
-}
-.tocposition .material-icons {
-    font-size: 14px;
+    /*box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;*/
 }
 
 .title, .description, .legend, .metricboxes {
@@ -207,13 +175,16 @@ export default {
     display: block;
     font-size: 12px;
 }
+.metricbox span span {
+    display: inline;
+}
 .metrictype {
     font-weight: bold;
     font-size: 12px;
     color: #727272;
 }
 .metricvalue {
-    margin-top: 0;
+    margin: 3px 0;
     font-weight: bold;
     font-size: 19px !important;
 }

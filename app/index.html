@@ -33,19 +33,18 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <div>
-                <label for="maptitle">Title</label>
-                <input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
-                <button class="button" onclick="window.print();">PRINT</button>                
-            </div>
-            <div style="clear:both"></div>
-        </header>
-        <div class="embed">
-            <iframe src="" width="100%" height="100%" title="map"></iframe>
-        </div>
-    </div>
+	<div class="container">
+        <!-- map -->
+        <sc-map></sc-map>
+
+        <!-- attribution -->
+        <span class="attribution"><a href="http://mcmap.org/geoportal/" target="_blank">Mecklenburg County GIS</a></span>
+
+        <!-- toc -->
+        <sc-toc></sc-toc>
+
+	</div>
+
 
     <!-- main js at bottom -->
     <script async src="js/app.js?{{cachebuster}}"></script>
