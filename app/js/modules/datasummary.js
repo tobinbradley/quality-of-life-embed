@@ -5,11 +5,13 @@ import selectGroups from '../../../data/config/selectgroups';
 
 function dataSummary(appState) {
     let summary = {
-        years: appState.metric.years,        
+        years: appState.metric.years, 
+        year: appState.year,       
         values: {
             'Jurisdiction': {},
             'City Council': {},
-            'County Commission': {}
+            'County Commission': {},
+            'Neighborhood': {}
         }
     };
 
@@ -37,7 +39,7 @@ function dataSummary(appState) {
             groupVal = prettyNumber(groupVal, appState.metric.config.decimals, appState.metric.config.prefix, appState.metric.config.suffix);
             groupArray.push(groupVal);
         }
-        summary.values["City Council"][selectGroupKeys[g]] = groupArray;
+        summary.values["City Council"]['District ' + selectGroupKeys[g]] = groupArray;
     }
 
     selectGroupKeys = Object.keys(selectGroups["County Commission"]);
@@ -49,7 +51,7 @@ function dataSummary(appState) {
             groupVal = prettyNumber(groupVal, appState.metric.config.decimals, appState.metric.config.prefix, appState.metric.config.suffix);
             groupArray.push(groupVal);
         }
-        summary.values["County Commission"][selectGroupKeys[g]] = groupArray;
+        summary.values["County Commission"]['District ' + selectGroupKeys[g]] = groupArray;
     }
 
     // County
@@ -66,7 +68,7 @@ function dataSummary(appState) {
         }
         areaArray.push(areaValue);
     }
-    summary.values.County = areaArray;
+    summary.values.Jurisdiction.County = areaArray;
 
 
     // selected values
@@ -78,7 +80,7 @@ function dataSummary(appState) {
             selectedArray.push(selectedValue);
         }
         summary.values.Neighborhood = selectedArray;
-    }
+    }    
 
     return summary;
 }
