@@ -2,7 +2,16 @@
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-            <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
+            <h1 class="title">                                
+                {{ sharedState.title }}, 
+                <div class="dropdown" v-if="sharedState.metric.years.length > 1">
+                    <span class="dropdown-inline">{{ sharedState.year }}</span><span class="no-print">&#x25BC;</span>
+                    <div class="dropdown-content">
+                        <a href="javascript:void(0)" v-for="y in sharedState.metric.years" v-on:click="updateYear(y)">{{y}}</a>
+                    </div>
+                </div>
+                <span v-else>{{sharedState.year}}</span>
+            </h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
                     <span class="metrictype">NEIGHBORHOOD<span v-if="sharedState.selected.length > 1">S</span></span>
@@ -83,6 +92,9 @@ export default {
         getMetaDesc: function() {
             this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>','').trim();
         },
+        updateYear(y) {
+            this.sharedState.year = y;
+        },
         processData: function() {
             this.processArea();
             this.processSelected();
@@ -147,16 +159,16 @@ export default {
 
 #toc {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 3px;
+    left: 3px;
     width: 260px;
     background: white;
-    /*box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;*/
+    box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
 }
 
 .title, .description, .legend, .metricboxes {
   position: relative;
-  z-index: 10;
+  /*z-index: 10;*/
 }
 
 .metricboxes {
@@ -254,10 +266,7 @@ svg {
         position:absolute;
         left: 0;
         top: 0;
-    }
-    .tocposition {
-        display: none;
-    }
+    }    
 }
 
 @media all and (max-width: 480px) {
