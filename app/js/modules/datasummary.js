@@ -6,7 +6,8 @@ import selectGroups from '../../../data/config/selectgroups';
 function dataSummary(appState) {
     let summary = {
         years: appState.metric.years, 
-        year: appState.year,       
+        year: appState.year,
+        selected: appState.selected,       
         values: {
             'Jurisdiction': {},
             'City Council': {},
