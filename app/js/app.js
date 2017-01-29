@@ -15,9 +15,9 @@ import getURLParameter from './modules/geturlparams';
 import fetchData from './modules/fetch';
 import dataConfig from '../../data/config/data';
 import mapConfig from '../../data/config/map';
-//import siteConfig from '../../data/config/site';
 import colors from './modules/breaks';
 import webglCheck from './modules/webglcheck';
+import dataSummary from './modules/datasummary';
 import Vue from 'vue';
 import ToC from './components/toc.vue';
 import MapGL from './components/map.vue';
@@ -73,6 +73,7 @@ window.onmessage = function(e){
     if (e.data.selected) {
         appState.selected = e.data.selected;
         appState.zoomSelected = e.data.selected.slice(0);
+        parent.postMessage({"summary": dataSummary(appState)}, "*");
     }
     if (e.data.year) {
         appState.year = e.data.year;
@@ -80,7 +81,6 @@ window.onmessage = function(e){
     if (e.data.metric) {
         appState.title = dataConfig[`m${e.data.metric}`].title;
         fetchData(appState, e.data.metric);
-        parent.postMessage({"maptitle": appState.title}, "*");
     }
 };
 
