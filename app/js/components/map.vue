@@ -9,7 +9,7 @@ import mapboxgl from 'mapbox-gl';
 import axios from 'axios';
 import geojsonDataMerge from '../modules/geojsondatamerge';
 import {prettyNumber} from '../modules/number_format';
-import getURLParameter from '../modules/geturlparams';
+import dataSummary from '../modules/datasummary';
 
 export default {
     name: 'sc-map',
@@ -41,9 +41,17 @@ export default {
                         _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
                         _this.zoomSelected(); 
+                        _this.mapUIEvents();
                     });
             });
 
+            
+
+        },
+        mapUIEvents: function() {
+            let _this = this;
+            let map = _this.privateState.map;
+            
             map.on('rotate', function(e) {
                 if (map.getPitch() > 25) {
                     map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'visible');
@@ -55,24 +63,25 @@ export default {
             });
 
             // on feature click add or remove from selected set
-            map.on('click', function (e) {
-                var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
-                if (!features.length) {
-                    return;
-                }
+            // map.on('click', function (e) {
+            //     var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+            //     if (!features.length) {
+            //         return;
+            //     }
 
-                let feature = features[0];
-                let featureIndex = _this.sharedState.selected.indexOf(feature.properties.id);
+            //     let feature = features[0];
+            //     let featureIndex = _this.sharedState.selected.indexOf(feature.properties.id);
 
-                if (featureIndex === -1) {
-                    _this.sharedState.selected.push(feature.properties.id);
-                } else {
-                    _this.sharedState.selected.splice(featureIndex, 1);
-                }
+            //     if (featureIndex === -1) {
+            //         _this.sharedState.selected.push(feature.properties.id);
+            //     } else {
+            //         _this.sharedState.selected.splice(featureIndex, 1);
+            //     }
 
-                // post back to parent
-                parent.postMessage({"selected": _this.sharedState.selected}, "*");
-            });
+            //     // post back to parent
+            //     parent.postMessage({"selected": _this.sharedState.selected}, "*");
+            //     parent.postMessage({"summary": dataSummary(_this.sharedState)}, "*");
+            // });
 
             // fix for popup cancelling click event on iOS
             let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -95,12 +104,11 @@ export default {
                     let val = prettyNumber(feature.properties.choropleth, _this.sharedState.metric.config.decimals, _this.sharedState.metric.config.prefix, _this.sharedState.metric.config.suffix);
 
                     popup.setLngLat(map.unproject(e.point))
-                        .setHTML(`<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 1.2em; margin: 0; padding: 0; line-height: 1em; font-weight: bold;">Neighborhood ${feature.properties.id}</h1>${val}</div>`)
+                        .setHTML(`<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 12px; margin: 0; padding: 0; line-height: 1em; font-weight: bold; color: #727272;">NBHD ${feature.properties.id}</h1><span style="font-size: 16px; font-weight: bold; margin: 5px 0; display: block;">${val}</span></div>`)
                         .addTo(map);
 
                 });
             }
-
         },        
         initNeighborhoods: function() {
             let map = this.privateState.map;
@@ -211,12 +219,6 @@ export default {
                     }
                 } else {
                     filter = ["in", "id", "-999999"];
-                }
-
-                // push selected state
-                let linkMetric = '';
-                if (getURLParameter("m")) {
-                    linkMetric = getURLParameter("m");
                 }
 
                 map.setFilter("neighborhoods-line-selected", filter);
