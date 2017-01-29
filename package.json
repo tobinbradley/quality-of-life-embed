@@ -41,8 +41,9 @@
     "postcss-import": "^8.1.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "vue": "^2.0.6",
-    "vueify": "^9.3.0"
+    "vue": "^2.1.10",
+    "vue-template-compiler": "^2.1.10",
+    "vueify": "^9.4.0"
   },
   "eslintConfig": {
     "env": {
@@ -54,8 +55,7 @@
     "parserOptions": {
       "sourceType": "module",
       "ecmaFeatures": {
-        "experimentalObjectRestSpread": true,
-        "jsx": true
+        "experimentalObjectRestSpread": true
       }
     },
     "plugins": [],
