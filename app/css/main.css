@@ -11,6 +11,7 @@ ____________________________________
 
 @import '../../node_modules/normalize.css/normalize.css';
 @import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
+@import './modules/dropdown.css';
 @import './modules/oldie.css';
 
 * {
@@ -52,8 +53,8 @@ a {
 
 .attribution {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 0;
+    right: 0;
     font-size: 0.8em;
     text-align: right;
     padding: 3px;
@@ -68,4 +69,7 @@ a {
         border: 1px solid black;
     }
     a:link:after, a:visited:after { content:""; }
+    .no-print, .mapboxgl-ctrl-top-right {
+        display: none !important;    
+    }
 }
