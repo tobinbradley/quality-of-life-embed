@@ -28,9 +28,12 @@ export default function fetchData(appState, metric) {
             };
 
             // replace year if previous year doesn't exist in data
-            if (years.indexOf(appState.year) === -1) {
+            if (years.indexOf(appState.year) === -1 || appState.resetYear) {
                 appState.year = years[years.length - 1];
             }
+            appState.resetYear = false;
+
+            // jenks
             appState.breaks = jenksBreaks(data.data.map, years, nKeys, 5);
 
             // send back summary data

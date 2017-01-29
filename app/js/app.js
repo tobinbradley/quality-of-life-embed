@@ -61,6 +61,7 @@ let appState = {
     selected: selected,
     zoomSelected: [],
     year: year,
+    resetYear: false,
     metadata: null,
     title: dataConfig[`m${metricId}`].title
 };
@@ -80,6 +81,7 @@ window.onmessage = function(e){
     }
     if (e.data.metric) {
         appState.title = dataConfig[`m${e.data.metric}`].title;
+        appState.resetYear = true;
         fetchData(appState, e.data.metric);
     }
 };
