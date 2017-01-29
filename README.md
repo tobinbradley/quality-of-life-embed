@@ -34,9 +34,5 @@ All URL arguments are optional. If no metric is passed, a random metric appears.
 Metrics and years are validated. If a bad metric ID is passed, a random metric is selected. If an unavailable year is passed, the most recent year is selected.
 
 *   *m*: metric id (integer), if none passed will select random
-*   *t*: title
 *   *s*: selected geography (id1, id2, ...)
 *   *y*: metric year (integer), if none passed will get most recent year available
-*   *pitch*: allow 3d pitching of map (default true)
-*   *smaxzoom*: set maximum zoom level when zooming in to selected geography
-*   *tocp*: show table of contents positioning arrows (default false)
