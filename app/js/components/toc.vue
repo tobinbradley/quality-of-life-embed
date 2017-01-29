@@ -70,6 +70,7 @@ import {abbrNum, round, prettyNumber} from '../modules/number_format';
 import {metaDescription} from '../modules/meta';
 import isNumeric from '../modules/isnumeric';
 import {calcValue, wValsToArray, sum} from '../modules/metric_calculations';
+import dataSummary from '../modules/datasummary';
 
 
 export default {
@@ -93,7 +94,9 @@ export default {
             this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>','').trim();
         },
         updateYear(y) {
-            this.sharedState.year = y;
+            let _this = this;
+            _this.sharedState.year = y;
+            parent.postMessage({"summary": dataSummary(_this.sharedState)}, "*");
         },
         processData: function() {
             this.processArea();
