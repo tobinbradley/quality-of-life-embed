@@ -70,7 +70,7 @@ a {
         border: 1px solid black;
     }
     a:link:after, a:visited:after { content:""; }
-    .no-print, .mapboxgl-ctrl-top-right {
+    .no-print, .mapboxgl-ctrl-top-right, .mapboxgl-popup {
         display: none !important;    
     }
 }
