@@ -10,6 +10,7 @@ import axios from 'axios';
 import geojsonDataMerge from '../modules/geojsondatamerge';
 import {prettyNumber} from '../modules/number_format';
 import dataSummary from '../modules/datasummary';
+import PitchToggle from '../modules/pitchtogglecontrol';
 
 export default {
     name: 'sc-map',
@@ -28,7 +29,10 @@ export default {
 
             // add nav control
             var nav = new mapboxgl.NavigationControl();
-            map.addControl(nav, 'top-right');            
+            map.addControl(nav, 'top-right');    
+
+            // add pitch toggle control
+            map.addControl(new PitchToggle({minpitchzoom: 11}));         
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {

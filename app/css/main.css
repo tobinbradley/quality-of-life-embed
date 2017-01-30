@@ -12,6 +12,7 @@ ____________________________________
 @import '../../node_modules/normalize.css/normalize.css';
 @import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 @import './modules/dropdown.css';
+@import './modules/pitchtogglecontrol.css';
 @import './modules/oldie.css';
 
 * {
