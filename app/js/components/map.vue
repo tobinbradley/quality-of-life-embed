@@ -32,7 +32,7 @@ export default {
             map.addControl(nav, 'top-right');    
 
             // add pitch toggle control
-            map.addControl(new PitchToggle({minpitchzoom: 11}));         
+            map.addControl(new PitchToggle({minpitchzoom: 10}));         
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {

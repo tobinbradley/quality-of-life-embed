@@ -52,6 +52,10 @@ a {
     /*border: 1px solid #ccc;*/
 }
 
+.mapboxgl-map {
+    font-family: Roboto, "Helvetica Neue", "Calibri", "Liberation Sans", sans-serif;
+}
+
 .attribution {
     position: absolute;
     bottom: 0;
