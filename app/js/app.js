@@ -21,6 +21,7 @@ import dataSummary from './modules/datasummary';
 import Vue from 'vue';
 import ToC from './components/toc.vue';
 import MapGL from './components/map.vue';
+import Attribution from './components/attribution.vue';
 
 
 webglCheck();  // Make sure WebGL is in da house
@@ -127,6 +128,15 @@ MapGL.data = function() {
     };
 };
 
+Attribution.data = function() {
+    return {
+        sharedState: appState,
+        privateState: {
+            attributionURL: null
+        }
+    };
+};
+
 new Vue({
     el: 'sc-toc',
     render: h => h(ToC)
@@ -134,6 +144,10 @@ new Vue({
 new Vue({
     el: 'sc-map',
     render: h => h(MapGL)
+});
+new Vue({
+    el: 'sc-attribution',
+    render: h => h(Attribution)
 });
 
 
