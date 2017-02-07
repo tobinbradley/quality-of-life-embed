@@ -1,5 +1,5 @@
 <template>
-    <span class="attribution"><a :href="privateState.attributionURL" target="_blank">Quality of Life Explorer</a></span>
+    <span class="attribution"><a :href="privateState.attributionURL" target="_blank">Quality of Life</a></span>
 </template>
 
 <script>

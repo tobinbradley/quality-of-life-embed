@@ -37,9 +37,8 @@ export default function fetchData(appState, metric) {
             appState.breaks = jenksBreaks(data.data.map, years, nKeys, 5);
 
             // send back summary data
-            if (window!=window.top) {
-                parent.postMessage({"summary": dataSummary(appState)}, "*");
-            }
+            parent.postMessage({"summary": dataSummary(appState)}, "*");
+
         });
 
     // fetch metadata
