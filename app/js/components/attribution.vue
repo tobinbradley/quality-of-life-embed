@@ -14,7 +14,7 @@
         methods: {
             updateLink: function() {
                 let _this = this;
-                _this.privateState.attributionURL = `http://mcmap.org/qol/?m=m${_this.sharedState.metric.config.metric}`;
+                _this.privateState.attributionURL = `http://mcmap.org/geoportal/?q=qualityoflife&qolm=${_this.sharedState.metric.config.metric}`;
             }
         }
     }
