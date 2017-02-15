@@ -273,6 +273,11 @@ svg {
 }
 
 @media all and (max-width: 480px) {
-
+    .description {
+        display: none;
+    }
+    #toc {
+        width: 180px;
+    }
 }
 </style>
