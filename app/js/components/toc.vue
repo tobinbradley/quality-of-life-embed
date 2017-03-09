@@ -3,7 +3,7 @@
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
             <h1 class="title">                                
-                {{ sharedState.title }}, 
+                <span class="content-editable" contenteditable="true">{{ sharedState.title }}</span>, 
                 <div class="dropdown" v-if="sharedState.metric.years.length > 1">
                     <span class="dropdown-inline">{{ sharedState.year }}</span><span class="no-print">&#x25BC;</span>
                     <div class="dropdown-content">
@@ -209,6 +209,10 @@ export default {
   border-bottom: 1px solid rgba(0,0,0,0.15);
   word-wrap: break-word;
   font-size: 15px;
+}
+
+.content-editable:focus {
+    outline: none;
 }
 
 .description {
