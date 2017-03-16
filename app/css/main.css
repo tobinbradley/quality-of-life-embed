@@ -101,6 +101,10 @@ label {
     font-weight: bold;
 }
 
+#mapembed {
+    font-size: 0.7em;
+}
+
 
 @media print {
     header {

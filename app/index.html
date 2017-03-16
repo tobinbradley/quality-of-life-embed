@@ -35,10 +35,14 @@
 <body>
     <div class="container">
         <header>
-            <div>
+            <div style="width: 45%; float: left;">
                 <label for="maptitle">Title</label>
                 <input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
                 <button class="button" onclick="window.print();">PRINT</button>                
+            </div>
+            <div style="width: 45%; float: right">
+                <label for="mapembed">Embed</label>
+                <textarea rows="5" type="text" id="mapembed" name="mapembed" onclick="this.select()" aria-label="map embed"></textarea>             
             </div>
             <div style="clear:both"></div>
         </header>

@@ -5,7 +5,7 @@
             <div class="tocposition" v-if="privateState.positionToggle">                
                 <a href="javascript:void(0)" title="Move Table of Contents" v-on:click="position()"><i class="material-icons">zoom_out_map</i></a>
             </div>
-            <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
+            <h1 class="title"><span class="content-editable" contenteditable="true">{{ sharedState.title }}</span>, {{ sharedState.year }}</h1>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
                     <span class="metrictype">SELECTED</span>
@@ -273,6 +273,10 @@ svg {
 
 .background-print-img{
     display: none;
+}
+
+.content-editable {
+     outline: none;
 }
 
 @media print{
