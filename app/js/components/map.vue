@@ -68,24 +68,26 @@ export default {
             });
 
             // on feature click add or remove from selected set
-            map.on('click', function (e) {
-                var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
-                if (!features.length) {
-                    return;
-                }
+            if (_this.sharedState.clickEvent === true) {
+                map.on('click', function (e) {
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+                    if (!features.length) {
+                        return;
+                    }
 
-                let feature = features[0];
-                let featureIndex = _this.sharedState.selected.indexOf(feature.properties.id);
+                    let feature = features[0];
+                    let featureIndex = _this.sharedState.selected.indexOf(feature.properties.id);
 
-                if (featureIndex === -1) {
-                    _this.sharedState.selected.push(feature.properties.id);
-                } else {
-                    _this.sharedState.selected.splice(featureIndex, 1);
-                }
+                    if (featureIndex === -1) {
+                        _this.sharedState.selected.push(feature.properties.id);
+                    } else {
+                        _this.sharedState.selected.splice(featureIndex, 1);
+                    }
 
-                // post back to parent
-                parent.postMessage({"summary": dataSummary(_this.sharedState)}, "*");
-            });
+                    // post back to parent
+                    parent.postMessage({"summary": dataSummary(_this.sharedState)}, "*");
+                });
+            }
 
             // fix for popup cancelling click event on iOS
             let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;

@@ -49,6 +49,10 @@ let selected = [];
 if (getURLParameter('s') !== null) {
     selected = getURLParameter('s').split(",");
 }
+let clickEvent = true;
+if (getURLParameter('c') !== null && getURLParameter('c') == 'false') {
+    clickEvent = false;
+}
 
 // the shared state between components
 let appState = {
@@ -64,6 +68,7 @@ let appState = {
     year: year,
     resetYear: false,
     metadata: null,
+    clickEvent: clickEvent,
     title: dataConfig[`m${metricId}`].title
 };
 
