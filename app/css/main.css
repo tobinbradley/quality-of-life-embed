@@ -19,9 +19,12 @@ ____________________________________
     box-sizing: border-box;
 }
 
+html, body {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
 body {
     color: #555;
-    font-family: Roboto, "Helvetica Neue", "Calibri", "Liberation Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: 0.02em;
