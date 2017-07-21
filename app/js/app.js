@@ -22,6 +22,7 @@ import Vue from 'vue';
 import ToC from './components/toc.vue';
 import MapGL from './components/map.vue';
 import Attribution from './components/attribution.vue';
+import MapTitle from './components/title.vue';
 
 
 webglCheck();  // Make sure WebGL is in da house
@@ -98,7 +99,7 @@ window.onmessage = function(e){
 fetchData(appState, metricId);
 
 // set up vue components
-ToC.data = function() {
+MapTitle.data = function() {
     return {
         sharedState: appState,
         privateState: {
@@ -106,7 +107,9 @@ ToC.data = function() {
             selected: null,
             area: null,
             selectedRaw: null,
-            areaRaw: null
+            areaRaw: null,
+            dataMin: 0,
+            dataMax: 0
         }
     };
 };
@@ -118,7 +121,12 @@ MapGL.data = function() {
             locate: null,
             mapOptions: {
                 container: 'map',
-                style: mapConfig.style,                
+                //style: mapConfig.style,                
+                style: {
+                    "version": 8,
+                    "sources": {},
+                    "layers": []                
+                },
                 attributionControl: false,
                 zoom: mapConfig.zoomEmbed,
                 center: mapConfig.centerEmbed,
@@ -143,8 +151,8 @@ Attribution.data = function() {
 };
 
 new Vue({
-    el: 'sc-toc',
-    render: h => h(ToC)
+    el: 'sc-maptitle',
+    render: h => h(MapTitle)
 });
 new Vue({
     el: 'sc-map',

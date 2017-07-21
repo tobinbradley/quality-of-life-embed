@@ -11,7 +11,6 @@ import axios from 'axios';
 import geojsonDataMerge from '../modules/geojsondatamerge';
 import {prettyNumber} from '../modules/number_format';
 import dataSummary from '../modules/datasummary';
-import PitchToggle from '../modules/pitchtogglecontrol';
 
 export default {
     name: 'sc-map',
@@ -29,12 +28,12 @@ export default {
             let map = _this.privateState.map;
 
             // add nav control
-            var nav = new mapboxgl.NavigationControl();
-            map.addControl(nav, 'top-right');    
+            //var nav = new mapboxgl.NavigationControl();
+            //map.addControl(nav, 'top-right');    
 
             // add pitch toggle control
-            map.addControl(new PitchToggle({minpitchzoom: 10}));
-            map.addControl(new mapboxgl.FullscreenControl());         
+            //map.addControl(new PitchToggle({minpitchzoom: 10}));
+            //map.addControl(new mapboxgl.FullscreenControl());         
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
@@ -48,6 +47,17 @@ export default {
                         _this.styleNeighborhoods();
                         _this.zoomSelected(); 
                         _this.mapUIEvents();
+
+                        setTimeout(() => {
+                            map.easeTo({
+                            duration: 2000,
+                            pitch: 30,
+                            bearing: 7,
+                            easing: (t) => {
+                                return t * (2 - t);
+                            }
+                            });
+                        }, 500)
                     });
             });
 
@@ -56,22 +66,12 @@ export default {
         },
         mapUIEvents: function() {
             let _this = this;
-            let map = _this.privateState.map;
-            
-            map.on('rotate', function(e) {
-                if (map.getPitch() > 25) {
-                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'visible');
-                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'visible');
-                } else {
-                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'none');
-                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'none');
-                }
-            });
+            let map = _this.privateState.map;           
 
             // on feature click add or remove from selected set
             if (_this.sharedState.clickEvent === true) {
                 map.on('click', function (e) {
-                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill-extrude'] });
                     if (!features.length) {
                         return;
                     }
@@ -99,7 +99,7 @@ export default {
                 });
                 // show feature info on mouse move
                 map.on('mousemove', function (e) {
-                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill'] });
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['neighborhoods-fill-extrude'] });
                     map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 
                     if (!features.length) {
@@ -126,54 +126,11 @@ export default {
                 type: 'geojson',
                 data: geoJSON
             });
-
-            // neighborhood boundaries
-            map.addLayer({
-                'id': 'neighborhoods-line',
-                'type': 'line',
-                'source': 'neighborhoods',
-                'layout': {},
-                'paint': {
-                    'line-color': '#666',
-                    'line-width': 0.8
-                }
-            }, 'building');
-
-            // neighborhood boundaries highlight
-            map.addLayer({
-                'id': 'neighborhoods-line-selected',
-                'type': 'line',
-                'source': 'neighborhoods',
-                'layout': {},
-                "filter": ["in", "id", "-999999"],
-                'paint': {
-                    'line-color': '#ba00e4',
-                    'line-width': {
-                        "base": 2,
-                        "stops": [
-                            [
-                                7,
-                                2
-                            ],
-                            [
-                                13,
-                                5
-                            ],
-                            [
-                                16,
-                                8
-                            ]
-                        ]
-                    }
-                }
-            }, 'water_label');
+            
             map.addLayer({
                 'id': 'neighborhoods-fill-selected',
                 'type': 'fill-extrusion',
                 'source': 'neighborhoods',
-                'layout': {
-                    'visibility': 'none'
-                },
                 "filter": ["in", "id", "-999999"],
                 'paint': {
                     'fill-extrusion-color': '#ba00e4',
@@ -186,24 +143,12 @@ export default {
             }, 'water_label');
 
             map.addLayer({
-                'id': 'neighborhoods-fill',
-                'type': 'fill',
-                'source': 'neighborhoods',
-                'filter': ['!=', 'choropleth', 'null'],
-                'paint': {
-                }
-            }, 'neighborhoods-line');
-
-            map.addLayer({
                 'id': 'neighborhoods-fill-extrude',
                 'type': 'fill-extrusion',
-                'source': 'neighborhoods',
-                'layout': {
-                    'visibility': 'none'
-                },
-                'filter': ['!=', 'choropleth', 'null'],
+                'source': 'neighborhoods',                
+                // 'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-extrusion-opacity': 0.9,
+                    'fill-extrusion-opacity': 1,
                     'fill-extrusion-height': {
                         'type': 'identity',
                         'property': 'height'
@@ -228,7 +173,7 @@ export default {
                     filter = ["in", "id", "-999999"];
                 }
 
-                map.setFilter("neighborhoods-line-selected", filter);
+                
                 map.setFilter("neighborhoods-fill-selected", filter);
 
             }
@@ -248,18 +193,14 @@ export default {
                 let map = this.privateState.map;
                 let breaks = this.sharedState.breaks;
                 let colors = this.sharedState.colors;
+                let _this = this;
 
                 let fillColor = {
-                    property: 'choropleth',
-                    stops: [
-                        [breaks[1], colors[0]],
-                        [breaks[2], colors[1]],
-                        [breaks[3], colors[2]],
-                        [breaks[4], colors[3]],
-                        [breaks[5], colors[4]]
-                    ]
+                    property: 'id',
+                    default: '#ccc',
+                    type: 'categorical',
+                    stops: _this.getColorStops()
                 };
-                map.setPaintProperty("neighborhoods-fill", 'fill-color', fillColor);
                 map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', fillColor);
         },
         updateChoropleth: function() {
@@ -315,6 +256,54 @@ export default {
             });
 
             return bounds;
+        },
+        getColor: function(value) {
+            const begin = {red: 255, green: 255, blue: 204};
+            const end = {red: 128, green: 0, blue: 38};
+            const percentage = this.getPercentage(value) / 100;
+
+            const red = begin.red + Math.floor(percentage * (end.red - begin.red));
+            const green = begin.green + Math.floor(percentage * (end.green - begin.green));
+            const blue = begin.blue + Math.floor(percentage * (end.blue - begin.blue));
+            
+            return `rgb(${red},${green},${blue})`;
+        },
+        getColorStops: function () {
+            const stops = [];
+            let _this = this;
+            let min = this.sharedState.breaks[0];
+            let max = this.sharedState.breaks[this.sharedState.breaks.length - 1];
+            let data = _this.sharedState.metric.data.map;
+
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];
+
+                if (!value || isNaN(value)) {
+                return;
+                }
+
+                const color = this.getColor(value, min, max);
+                stops.push([id, color]);
+            });
+
+            return stops;
+        },
+        getPercentage: function(value) {
+            if (!Number(value)) {
+                return 0;
+            }
+
+            let min = this.sharedState.breaks[0];
+            let max = this.sharedState.breaks[this.sharedState.breaks.length - 1];
+
+            const totalDiff = max - min,
+                valueDiff = value - min;
+            let percentage = valueDiff / totalDiff * 100;
+
+            percentage = Math.max(percentage, 0);
+            percentage = Math.min(percentage, 100);
+
+            return percentage;
         }
     },
     mounted: function () {
