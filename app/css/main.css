@@ -24,7 +24,8 @@ html, body {
 }
 
 body {
-    color: #555;
+    color: #d7d5d5;
+    background-color: rgb(46,45,44);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: 0.02em;
@@ -54,22 +55,6 @@ a {
     height: 100%;
     /*border: 1px solid #ccc;*/
 }
-
-.mapboxgl-map {
-    font-family: Roboto, "Helvetica Neue", "Calibri", "Liberation Sans", sans-serif;
-}
-
-.attribution {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    font-size: 0.8em;
-    text-align: right;
-    padding: 3px;
-    background: rgba(255,255,255,0.7);
-}
-
-
 
 
 @media print{
