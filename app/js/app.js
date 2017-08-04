@@ -1,6 +1,6 @@
 /*
 ____________________________________
-/ The embed JS file, using babel and \
+/ The main JS file, using babel and \
 \ browserify.                       /
 ------------------------------------
        \   ^__^
@@ -10,18 +10,17 @@ ____________________________________
                ||     ||
 */
 
-require('es6-promise').polyfill();  // fix for Axois on IE11
+require('es6-promise').polyfill();  
 import getURLParameter from './modules/geturlparams';
 import fetchData from './modules/fetch';
 import dataConfig from '../../data/config/data';
 import mapConfig from '../../data/config/map';
-import colors from './modules/breaks';
+import * as colors from './modules/breaks';
 import webglCheck from './modules/webglcheck';
 import dataSummary from './modules/datasummary';
 import Vue from 'vue';
-import ToC from './components/toc.vue';
+import Years from './components/years.vue';
 import MapGL from './components/map.vue';
-import Attribution from './components/attribution.vue';
 import MapTitle from './components/title.vue';
 
 
@@ -121,32 +120,25 @@ MapGL.data = function() {
             locate: null,
             mapOptions: {
                 container: 'map',
-                //style: mapConfig.style,                
-                style: {
-                    "version": 8,
-                    "sources": {},
-                    "layers": []                
-                },
+                style: 'style/darkmatter.json',
                 attributionControl: false,
                 zoom: mapConfig.zoomEmbed,
                 center: mapConfig.centerEmbed,
                 maxBounds: mapConfig.maxBounds,
                 minZoom: mapConfig.minZoom,
-                preserveDrawingBuffer: mapConfig.preserveDrawingBuffer
+                preserveDrawingBuffer: mapConfig.preserveDrawingBuffer                
             },
             mapLoaded: false,
             metricId: null,
-            geoJSON: null
+            geoJSON: null,
+            isPitched3D: false
         }
     };
 };
 
-Attribution.data = function() {
+Years.data = function() {
     return {
-        sharedState: appState,
-        privateState: {
-            attributionURL: null
-        }
+        sharedState: appState
     };
 };
 
@@ -158,9 +150,6 @@ new Vue({
     el: 'sc-map',
     render: h => h(MapGL)
 });
-new Vue({
-    el: 'sc-attribution',
-    render: h => h(Attribution)
-});
+
 
 
