@@ -1,15 +1,28 @@
 <template lang="html">
-    <div id="mapTitle" v-if="sharedState.metric.config" class="top left">
-        <div>
-            <h1>
-                <span v-html="privateState.metaDesc"></span><span v-if="sharedState.metric.config.label"></span>
-            </h1>
-            <h2>
-                <span style="color: rgb(255,242,0);">■</span> <span>{{privateState.dataMin | formatNumber(sharedState.metric)}}</span> to 
-                <span style="color: rgb(237,66,100);">■</span> <span>{{privateState.dataMax | formatNumber(sharedState.metric)}}</span> 
-                <span v-if="sharedState.metric.config.label">{{ sharedState.metric.config.label.toLowerCase() }}</span>
-            </h2>
-        </div>
+    <div id="mapTitle" v-if="sharedState.metric.config">
+        <h1>
+            <a href="javascript:void(0)" v-on:click="launchPortal" v-html="privateState.metaDesc"></a>
+        </h1>
+        <h2>
+            <svg class="icon" v-bind:style="{fill: getBreakColor(0)}"><use xlink:href="#icon-stop2"></use></svg>
+            <span>{{privateState.dataMin | formatNumber(sharedState.metric)}}</span> to 
+            <svg class="icon" v-bind:style="{fill: getBreakColor(1)}"><use xlink:href="#icon-stop2"></use></svg>
+            <span>{{privateState.dataMax | formatNumber(sharedState.metric)}}</span> 
+            <span v-if="sharedState.metric.config.label">{{ sharedState.metric.config.label.toLowerCase() }}</span>
+        </h2>
+        <h3>
+            County: {{ privateState.area }}
+            <span v-if="sharedState.selected.length > 0" style="margin-left: 10px;"> Neighborhood: {{ privateState.selected }}</span>
+        </h3>
+        <Years></Years>
+        <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg"
+	    xmlns:xlink="http://www.w3.org/1999/xlink">
+		    <defs>
+                <symbol id="icon-stop2" viewBox="0 0 32 32">
+                    <path d="M4 4h24v24h-24z"></path>
+                </symbol>        
+            </defs>
+        </svg>
     </div>
 </template>
 
@@ -19,12 +32,18 @@ import {metaDescription} from '../modules/meta';
 import isNumeric from '../modules/isnumeric';
 import {calcValue, wValsToArray, sum, valsToArray} from '../modules/metric_calculations';
 import dataSummary from '../modules/datasummary';
+import Years from './years.vue';
+import {breaksRange} from '../modules/breaks';
 
 
 export default {
     name: 'sc-title',
+    components: {
+            Years: Years
+    },
     watch: {
         'sharedState.metric': 'processData',
+        'sharedState.year': 'processData',
         'sharedState.metadata': 'getMetaDesc',
         'sharedState.selected': 'processSelected'
     },
@@ -41,6 +60,13 @@ export default {
             } else {
                 return num;
             }
+        },
+        getBreakColor: function(index) {
+            return breaksRange[index];
+        },
+        launchPortal: function () {
+            let _this = this;
+            window.open(`http://mcmap.org/geoportal/?q=qualityoflife&qolm=${_this.sharedState.metric.config.metric}`);
         },
         getMetaDesc: function() {
             this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>','').trim();
@@ -80,11 +106,6 @@ export default {
                 this.privateState.areaRaw = prettyNumber(rawValue, 0);
             }
 
-            // get min and max
-            //this.privateState.dataMin = 
-            //let valArray = valsToArray(metric.data.map, metric.years, keys);
-            // console.log(valArray);
-            // console.log(Math.max.apply(Math, valArray), Math.min.apply(Math, valArray));
             this.privateState.dataMin =  this.sharedState.breaks[0];
             this.privateState.dataMax = this.sharedState.breaks[this.sharedState.breaks.length - 1];
         },
@@ -98,29 +119,53 @@ export default {
 </script>
 
 <style lang="css" scoped>
-
+a {
+    transition: 0.6s; 
+    color: rgb(230, 230, 230);
+}
+a:hover {
+    color: #176ADF;
+}
+.icon {
+  display: inline-block;
+  vertical-align: text-bottom;
+  width: 1.2em;
+  height: 1.2em;  
+}
 #mapTitle {
     position: absolute;
-    top: 0;
-    left: 5px;
-    right: 5px;
+    width: 60%;
+    max-width: 960px;
+    min-width: 480px;
     text-align: center;
-    
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: rgba(46,45,44,0.8);
 }
-#mapTitle div {
-    background: rgba(255,255,255,0.8);
-    display: inline-block;
-    padding-left: 8px;
-    padding-right: 8px;
-}
+
 h1 {
-    font-size: 1.2em;
-    line-height: 1.1em;
+    font-size: 1em;
+    line-height: 1.15em;
+    margin: 5px 0;
 }
 h2 {
-    font-size: 1em;
-     line-height: 0.5em; 
+    font-size: 0.9em;
     font-weight: normal;
+    margin: 8px 0 0;
+}
+h3 {
+    font-size: 0.8em;
+    font-weight: normal;
+    margin: 5px 0 2px;
+}
+
+@media all and (max-width: 480px) {
+    #mapTitle {
+        min-width: 100%;
+        /* padding-right: 50px; */
+    }
 }
 
 </style>
