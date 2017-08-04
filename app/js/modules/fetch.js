@@ -1,7 +1,7 @@
 import dataConfig from '../../../data/config/data';
 import axios from 'axios';
-import jenksBreaks from './jenksbreaks';
 import dataSummary from './datasummary';
+import {valsToArray} from './metric_calculations';
 
 export default function fetchData(appState, metric) {
     appState.metricId = metric;
@@ -33,8 +33,9 @@ export default function fetchData(appState, metric) {
             }
             appState.resetYear = false;
 
-            // jenks
-            appState.breaks = jenksBreaks(data.data.map, years, nKeys, 5);
+            // breaks
+            let allVals = valsToArray(data.data.map, years, nKeys);
+            appState.breaks = [Math.min(...allVals), Math.max(...allVals)];
 
             // send back summary data
             parent.postMessage({"summary": dataSummary(appState)}, "*");
