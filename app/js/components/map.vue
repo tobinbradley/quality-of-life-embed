@@ -5,35 +5,28 @@
 </template>
 
 <script>
-//import mapboxgl from 'mapbox-gl';
-import mapboxgl from 'mapbox-gl/src/index.js';
+import mapboxgl from 'mapbox-gl';
 import axios from 'axios';
-import geojsonDataMerge from '../modules/geojsondatamerge';
+import {breaksRange} from '../modules/breaks';
 import {prettyNumber} from '../modules/number_format';
 import dataSummary from '../modules/datasummary';
+import {scaleLinear} from 'd3-scale';
 
 export default {
     name: 'sc-map',
     watch: {
-        'sharedState.selected': 'selectNeighborhoods',
+        'sharedState.selected': 'styleNeighborhoods',
         'sharedState.breaks': 'updateBreaks',
         'sharedState.year': 'updateYear',
-        'sharedState.zoomSelected': 'zoomSelected'
+        'sharedState.zoomSelected': 'zoomSelected',
+        'privateState.isPitched3D': 'toggle3D'
     },
     methods: {
         initMap: function() {
             let _this = this;
             _this.privateState.map = new mapboxgl.Map(_this.privateState.mapOptions);
 
-            let map = _this.privateState.map;
-
-            // add nav control
-            //var nav = new mapboxgl.NavigationControl();
-            //map.addControl(nav, 'top-right');    
-
-            // add pitch toggle control
-            //map.addControl(new PitchToggle({minpitchzoom: 10}));
-            //map.addControl(new mapboxgl.FullscreenControl());         
+            let map = _this.privateState.map;        
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
@@ -43,30 +36,52 @@ export default {
                         _this.privateState.geoJSON = response.data;
 
                         _this.initNeighborhoods();
-                        _this.selectNeighborhoods();
+                        //_this.selectNeighborhoods();
                         _this.styleNeighborhoods();
                         _this.zoomSelected(); 
                         _this.mapUIEvents();
 
-                        setTimeout(() => {
-                            map.easeTo({
-                            duration: 2000,
-                            pitch: 30,
-                            bearing: 7,
-                            easing: (t) => {
-                                return t * (2 - t);
-                            }
-                            });
-                        }, 500)
+                        // setTimeout(() => {
+                        //     map.easeTo({
+                        //     duration: 2000,
+                        //     pitch: 20,
+                        //     bearing: 5,
+                        //     easing: (t) => {
+                        //         return t * (2 - t);
+                        //     }
+                        //     });
+                        // }, 500)
                     });
-            });
+            });            
 
-            
+        },
+        toggle3D: function() {
+            let _this = this;
+            let map = _this.privateState.map;
+            let pitched = this.privateState.isPitched3D;
 
+
+            if (pitched) {
+                map.setLayoutProperty('neighborhoods', 'visibility', 'none');
+                map.moveLayer('neighborhoods-fill-extrude');
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', _this.getHeight());
+            } else {
+                map.setLayoutProperty('neighborhoods', 'visibility', 'visible');
+                map.moveLayer('neighborhoods-fill-extrude', 'neighborhoods');
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', 0);
+            }
         },
         mapUIEvents: function() {
             let _this = this;
-            let map = _this.privateState.map;           
+            let map = _this.privateState.map;        
+            
+            map.on('rotate', function(e) {
+                if (map.getPitch() >= 20) {
+                    _this.privateState.isPitched3D = true;
+                } else {
+                    _this.privateState.isPitched3D = false;
+                }
+            });
 
             // on feature click add or remove from selected set
             if (_this.sharedState.clickEvent === true) {
@@ -108,10 +123,13 @@ export default {
                     }
 
                     let feature = features[0];
-                    let val = prettyNumber(feature.properties.choropleth, _this.sharedState.metric.config.decimals, _this.sharedState.metric.config.prefix, _this.sharedState.metric.config.suffix);
+                    let id = feature.properties.id;
+                    let data = _this.sharedState.metric.data.map[id][`y_${_this.sharedState.year}`];
+
+                    let val = prettyNumber(data, _this.sharedState.metric.config.decimals, _this.sharedState.metric.config.prefix, _this.sharedState.metric.config.suffix);
 
                     popup.setLngLat(map.unproject(e.point))
-                        .setHTML(`<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 12px; margin: 0; padding: 0; line-height: 1em; font-weight: bold; color: #727272;">NBHD ${feature.properties.id}</h1><span style="font-size: 16px; font-weight: bold; margin: 5px 0; display: block;">${val}</span></div>`)
+                        .setHTML(`<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 12px; margin: 0; padding: 0; line-height: 1em; font-weight: bold; color: #727272;">NBHD ${id}</h3><div style="font-size: 16px; font-weight: bold; margin: 5px 0 0;">${val}</div></div>`)
                         .addTo(map);
 
                 });
@@ -120,96 +138,50 @@ export default {
         initNeighborhoods: function() {
             let map = this.privateState.map;
             let _this = this;
-            let geoJSON =  _this.geoJSONMerge();
+            let geoJSON =  _this.privateState.geoJSON;
 
             map.addSource('neighborhoods', {
                 type: 'geojson',
                 data: geoJSON
-            });
-            
+            });                        
+
             map.addLayer({
-                'id': 'neighborhoods-fill-selected',
-                'type': 'fill-extrusion',
+                'id': 'neighborhoods',
+                'type': 'line',
                 'source': 'neighborhoods',
-                "filter": ["in", "id", "-999999"],
-                'paint': {
-                    'fill-extrusion-color': '#ba00e4',
-                    'fill-extrusion-opacity': 0.7,
-                    'fill-extrusion-height': {
-                        'type': 'identity',
-                        'property': 'height'
-                    }
-                }
-            }, 'water_label');
+                'layout': {},
+                'paint': {}
+            }, 'highway_motorway_casing');
 
             map.addLayer({
                 'id': 'neighborhoods-fill-extrude',
                 'type': 'fill-extrusion',
                 'source': 'neighborhoods',                
-                // 'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-extrusion-opacity': 1,
-                    'fill-extrusion-height': {
-                        'type': 'identity',
-                        'property': 'height'
-                    }
+                    'fill-extrusion-opacity': 1
                 }
-            }, 'neighborhoods-fill-selected');
+            }, 'neighborhoods');
 
-        },
-        selectNeighborhoods: function() {
-            let _this = this;
-            if (this.privateState.mapLoaded === true) {
-                let map = this.privateState.map;
-                let selected = this.sharedState.selected;
-                let filter;
-
-                if (selected.length > 0) {
-                    filter = ["in", "id"];
-                    for (let i = 0; i < selected.length; i++) {
-                        filter.push(selected[i]);
-                    }
-                } else {
-                    filter = ["in", "id", "-999999"];
-                }
-
-                
-                map.setFilter("neighborhoods-fill-selected", filter);
-
-            }
-        },
+        },        
         zoomSelected: function() {
-            let bounds;
             let _this = this;
-            let flyOptions = {padding: 50};
-            if (_this.sharedState.selected.length === 0) {
-                bounds = _this.getFullBounds();
-            } else {
-                bounds = _this.getSelectedBounds();
-            }
-            _this.privateState.map.fitBounds(bounds, flyOptions);
+            let flyOptions = {padding: {top: 65, bottom: 10, left: 10, right: 10} };          
+            _this.privateState.map.fitBounds(_this.getFullBounds(), flyOptions);
         },
         styleNeighborhoods: function() {
                 let map = this.privateState.map;
-                let breaks = this.sharedState.breaks;
-                let colors = this.sharedState.colors;
                 let _this = this;
 
-                let fillColor = {
-                    property: 'id',
-                    default: '#ccc',
-                    type: 'categorical',
-                    stops: _this.getColorStops()
-                };
-                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', fillColor);
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', _this.getColors());
+                map.setPaintProperty("neighborhoods", 'line-color', _this.getOutlineColor());
+                map.setPaintProperty("neighborhoods", 'line-width', _this.getOutlineWidth());
+                if (_this.privateState.isPitched3D) {
+                    map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', _this.getHeight());
+                }                
         },
         updateChoropleth: function() {
             let _this = this;
             if (this.privateState.mapLoaded) {
-                let geoJSON =  _this.geoJSONMerge();
-
-                this.privateState.map.getSource('neighborhoods').setData(geoJSON);
-
                 this.styleNeighborhoods();
             }
         },
@@ -221,11 +193,6 @@ export default {
             if (this.sharedState.metricId === this.privateState.metricId) {
                 this.updateChoropleth();
             }
-        },
-        geoJSONMerge: function() {
-            let _this = this;
-            let geoObj = geojsonDataMerge(_this.privateState.geoJSON, _this.sharedState.metric.data.map, _this.sharedState.year);
-            return geoObj;
         },
         getFullBounds: function() {
             let bounds = new mapboxgl.LngLatBounds();
@@ -241,69 +208,98 @@ export default {
 
             return bounds;
         },
-        getSelectedBounds: function() {
-            let bounds = new mapboxgl.LngLatBounds();
-            let _this = this;
-
-            this.privateState.geoJSON.features.forEach(function(feature) {
-                if (_this.sharedState.selected.indexOf(feature.properties.id) !== -1) {
-                    feature.geometry.coordinates.forEach(function(coord) {
-                        coord.forEach(function(el) {
-                            bounds.extend(el);
-                        })
-                    });
-                }
-            });
-
-            return bounds;
-        },
-        getColor: function(value) {
-            const begin = {red: 255, green: 255, blue: 204};
-            const end = {red: 128, green: 0, blue: 38};
-            const percentage = this.getPercentage(value) / 100;
-
-            const red = begin.red + Math.floor(percentage * (end.red - begin.red));
-            const green = begin.green + Math.floor(percentage * (end.green - begin.green));
-            const blue = begin.blue + Math.floor(percentage * (end.blue - begin.blue));
-            
-            return `rgb(${red},${green},${blue})`;
-        },
-        getColorStops: function () {
+        getOutlineColor: function() {
             const stops = [];
             let _this = this;
-            let min = this.sharedState.breaks[0];
-            let max = this.sharedState.breaks[this.sharedState.breaks.length - 1];
-            let data = _this.sharedState.metric.data.map;
 
-            Object.keys(data).forEach(id => {
-                const value = data[id][`y_${_this.sharedState.year}`];
-
-                if (!value || isNaN(value)) {
-                return;
-                }
-
-                const color = this.getColor(value, min, max);
-                stops.push([id, color]);
+            _this.sharedState.selected.forEach(id => {
+                stops.push([id, '#176ADF']);
             });
+
+            let outline = {
+                property: 'id',
+                default: 'rgba(46,45,44,1)',
+                type: 'categorical',
+                stops: stops
+            }
+
+            if (stops.length > 0) {
+                return outline;
+            } else {
+                return outline.default
+            }
+        },
+        getOutlineWidth: function() {
+            const stops = [];
+            let _this = this;
+
+            _this.sharedState.selected.forEach(id => {
+                stops.push([id, 4]);
+            });
+
+            let outlineSize = {
+                property: 'id',
+                default: 0.3,
+                type: 'categorical',
+                stops: stops
+            }
+
+            if (stops.length > 0) {
+                return outlineSize;
+            } else {
+                return outlineSize.default;
+            }
 
             return stops;
         },
-        getPercentage: function(value) {
-            if (!Number(value)) {
-                return 0;
+        getColors: function () {
+            const stops = [];
+            let _this = this;
+            let data = _this.sharedState.metric.data.map;
+            let color = scaleLinear()
+                    .domain([_this.sharedState.breaks[0], _this.sharedState.breaks[this.sharedState.breaks.length - 1]])
+                    .range(breaksRange);
+
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];
+                
+                if (value !== null) {                                
+                    stops.push([id, color(value)]);
+                }
+            });
+
+            let fillColor = {
+                property: 'id',
+                default: 'rgb(30,29,28)',
+                type: 'categorical',
+                stops: stops
+            };
+
+            return fillColor;
+        },
+        getHeight: function() {
+            let _this = this;
+            const stops = [];            
+            let data = _this.sharedState.metric.data.map;
+            let heightAdjust = scaleLinear()
+                    .domain([_this.sharedState.breaks[0], _this.sharedState.breaks[this.sharedState.breaks.length - 1]])
+                    .range([0, 3000]);            
+
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];                
+                if (value !== null) {
+                    stops.push([id, heightAdjust(value)]);
+                }
+            });
+
+            let height = {
+                property: 'id',
+                default: 0,
+                type: 'categorical',
+                stops: stops
             }
 
-            let min = this.sharedState.breaks[0];
-            let max = this.sharedState.breaks[this.sharedState.breaks.length - 1];
-
-            const totalDiff = max - min,
-                valueDiff = value - min;
-            let percentage = valueDiff / totalDiff * 100;
-
-            percentage = Math.max(percentage, 0);
-            percentage = Math.min(percentage, 100);
-
-            return percentage;
+            return height;
         }
     },
     mounted: function () {
@@ -313,3 +309,9 @@ export default {
 };
 </script>
 
+<style lang="css">
+.mapboxgl-popup-content {
+    padding: 10px 10px 5px;
+    color: #555;
+}
+</style>
