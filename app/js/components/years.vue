@@ -24,12 +24,15 @@
 </template>
 
 <script>
+import dataSummary from '../modules/datasummary';
+
 export default {
     name: 'sc-year',     
     methods: {
         changeYear: function(elem) {
             let closest = this.getClosest(this.sharedState.metric.years, elem.srcElement.value);
             this.sharedState.year = elem.srcElement.value = closest;
+            this.sendYearChange();
         },
         getClosest: function(arr, val) {
             return arr.reduce(function (prev, curr) {
@@ -42,9 +45,13 @@ export default {
                 setTimeout( (function( index ) {
                     return function() {
                         _this.sharedState.year = array[index]; 
+                        _this.sendYearChange();
                     };
                 }( index )), (2000 * index) );
             }); 
+        },
+        sendYearChange: function() {
+            parent.postMessage({"summary": dataSummary(this.sharedState)}, "*");
         }
     }
 }
