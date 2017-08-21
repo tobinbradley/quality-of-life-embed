@@ -2,7 +2,7 @@
 
 An independent project related to the [Quality of Life Dashboard](https://github.com/tobinbradley/Mecklenburg-County-Quality-of-Life-Dashboard).
 
-[DEMO](http://mcmap.org/qol-embed/)
+[DEMO](http://mcmap.org/qol-mecklenburg/embed/)
 
 ## Setup
 
@@ -29,7 +29,7 @@ npm run build
 
 ## URL Arguments
 
-All URL arguments are optional. If no metric is passed, a random metric appears. If no year is passed, the most recent year for the given metric is shown. 
+All URL arguments are optional. If no metric is passed, a random metric appears. If no year is passed, the most recent year for the given metric is shown.
 
 Metrics and years are validated. If a bad metric ID is passed, a random metric is selected. If an unavailable year is passed, the most recent year is selected.
 
