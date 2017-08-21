@@ -9,7 +9,8 @@ function dataSummary(appState) {
         year: appState.year,
         selected: appState.selected,
         values: {
-            'Neighborhood': {}
+            'Neighborhood': {},
+            'Jurisdiction': {}
         }
     };
 
