@@ -2,39 +2,44 @@
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
-            <div class="tocposition" v-if="privateState.positionToggle">                
-                <a href="javascript:void(0)" title="Move Table of Contents" v-on:click="position()"><i class="material-icons">zoom_out_map</i></a>
+            <div class="tocposition">
+                <a href="javascript:void(0)" title="Move Table of Contents" v-on:click="position()"><svg class="icon"><use xlink:href="#icon-zoom_out_map"></use></svg></a>
             </div>
-            <h1 class="title"><span class="content-editable" contenteditable="true">{{ sharedState.title }}</span>, {{ sharedState.year }}</h1>
+            <h1 class="title">{{ sharedState.title }}, {{ sharedState.year }}</h1>
+            <h2 v-if="privateState.metaDesc" class="description">
+                <span v-html="privateState.metaDesc"></span>
+            </h2>
             <div class="metricboxes">
                 <div class="metricbox" v-if="sharedState.selected.length > 0">
                     <span class="metrictype">SELECTED</span>
-                    <span class="metricvalue">{{ privateState.selected }}</span>                    
+                    <span class="metricvalue">{{ privateState.selected }}</span>
+                    <span v-if="sharedState.metric.config.label" class="metriclabel">{{ sharedState.metric.config.label.toLowerCase() }}</span>
+                    <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0" class="metric-raw">
+                        <span>or</span>
+                        <span class="metricvalue metricraw">{{privateState.selectedRaw}}</span>
+                        <span v-html="sharedState.metric.config.raw_label.toLowerCase()" class="metriclabel"></span>
+                    </span>
                 </div>
                 <div class="metricbox">
                     <span class="metrictype">COUNTY</span>
-                    <span class="metricvalue">{{ privateState.area }}</span>                    
+                    <span class="metricvalue">{{ privateState.area }}</span>
+                    <span v-if="sharedState.metric.config.label" class="metriclabel">{{ sharedState.metric.config.label.toLowerCase() }}</span>
+                    <span v-if="sharedState.metric.config.raw_label" class="metric-raw">
+                        <span>or</span>
+                        <span class="metricvalue metricraw">{{privateState.areaRaw}}</span>
+                        <span v-html="sharedState.metric.config.raw_label.toLowerCase()" class="metriclabel"></span>
+                    </span>
                 </div>
             </div>
-            <h2 v-if="privateState.metaDesc" class="description">
-                <span v-html="privateState.metaDesc"></span><span v-if="sharedState.metric.config.label"> ({{ sharedState.metric.config.label.toLowerCase() }})</span>.                
-                <span v-if="sharedState.metric.config.raw_label"><br><br>Total <span v-html="sharedState.metric.config.raw_label.toLowerCase()"></span>: <br></span>
-                <span v-if="sharedState.metric.config.raw_label && sharedState.selected.length > 0" style="white-space: nowrap;">
-                    Selected: {{privateState.selectedRaw}} &bull;   
-                </span>
-                <span v-if="sharedState.metric.config.raw_label" style="white-space: nowrap;">
-                    County: {{privateState.areaRaw}}
-                </span>
-            </h2>
             <div class="legend">
-                <svg  v-if="sharedState.breaks" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 248.4 39.2"id="maplegend" role="img" aria-labelledby="svgTitle">
+                <svg  v-if="sharedState.breaks" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 248.4 39.2" id="maplegend" role="img" aria-labelledby="svgTitle">
                     <title id="svgTitle">Choropleth legend</title>
                     <g transform="translate(20.714293 -851.75475)">
-                        <rect y="865.9" x="-20.7" height="25" width="50" v-bind:style="{fill: this.sharedState.colors[0]}"/>
-                        <rect width="50" height="25" x="28.9" y="865.9" v-bind:style="{fill: this.sharedState.colors[1]}"/>
-                        <rect width="50" height="25" x="78.5" y="865.9" v-bind:style="{fill: this.sharedState.colors[2]}"/>
-                        <rect y="865.9" x="128.1" height="25" width="50" v-bind:style="{fill: this.sharedState.colors[3]}"/>
-                        <rect width="50" height="25" x="177.6" y="865.9" v-bind:style="{fill: this.sharedState.colors[4]}"/>
+                        <rect y="865.9" x="-20.7" height="25" width="50" v-bind:style="{fill: this.sharedState.colors[0]}" v-on:click="selectBreak(0)" v-on:mouseover="highlight(0)" v-on:mouseout="highlight(-1)"  />
+                        <rect width="50" height="25" x="28.9" y="865.9" v-bind:style="{fill: this.sharedState.colors[1]}" v-on:click="selectBreak(1)" v-on:mouseover="highlight(1)" v-on:mouseout="highlight(-1)" />
+                        <rect width="50" height="25" x="78.5" y="865.9" v-bind:style="{fill: this.sharedState.colors[2]}" v-on:click="selectBreak(2)" v-on:mouseover="highlight(2)" v-on:mouseout="highlight(-1)" />
+                        <rect y="865.9" x="128.1" height="25" width="50" v-bind:style="{fill: this.sharedState.colors[3]}" v-on:click="selectBreak(3)" v-on:mouseover="highlight(3)" v-on:mouseout="highlight(-1)" />
+                        <rect width="50" height="25" x="177.6" y="865.9" v-bind:style="{fill: this.sharedState.colors[4]}" v-on:click="selectBreak(4)" v-on:mouseover="highlight(4)" v-on:mouseout="highlight(-1)" />
                         <text x="-19.5" y="864.3" class="legendText">
                           <tspan x="-19.5" y="864.3">{{ abbrNumber(sharedState.breaks[0]) }}</tspan>
                         </text>
@@ -66,7 +71,6 @@ import {metaDescription} from '../modules/meta';
 import isNumeric from '../modules/isnumeric';
 import {calcValue, wValsToArray, sum} from '../modules/metric_calculations';
 
-
 export default {
     name: 'sc-toc',
     watch: {
@@ -76,7 +80,35 @@ export default {
         'sharedState.year': 'processYear'
     },
     methods: {
-        abbrNumber: function (value) {
+      highlight: function(n) {
+        if (n === -1) {
+          this.sharedState.highlight = [];
+        } else {
+          this.sharedState.highlight = this.getBreakIds(n);
+        }
+      },
+      selectBreak: function(n) {
+        this.sharedState.selected = this.getBreakIds(n);
+      },
+      getBreakIds: function(n) {
+        let _this = this;
+        let data = _this.sharedState.metric.data.map;
+        let breaks = _this.sharedState.breaks;
+        let ids = [];
+
+        // loop through data to get id's
+        Object.keys(data).forEach(id => {
+          const value = data[id][`y_${_this.sharedState.year}`];
+
+          if (value !== null && value >= breaks[n] && value <= breaks[n + 1]) {
+            ids.push(id.toString());
+          }
+        });
+
+        return ids;
+      },
+
+      abbrNumber: function (value) {
             let num = abbrNum(value, 1);
             if (isNumeric(num)) {
                 return round(num, this.sharedState.metric.config.decimals);
@@ -128,43 +160,43 @@ export default {
             if (el.classList.contains("right")) {
                 el.classList.remove('bottom');
                 el.classList.remove('right');
-                el.classList.add('top');                
+                el.classList.add('top');
                 el.classList.add('left');
-            } 
+            }
             // move to bottom right from bottom left
             else if (el.classList.contains("bottom")) {
                 el.classList.remove('left');
-                el.classList.add('right'); 
-            } 
+                el.classList.add('right');
+            }
             // move to bottom left from top left
             else if (el.classList.contains("top")) {
                 el.classList.remove('top');
                 el.classList.add('bottom');
             }
-            
-        }        
+
+        }
     }
 }
 </script>
 
 <style lang="css" scoped>
 #toc.top {
-    top: 3px;
+    top: -1px;
 }
 #toc.bottom {
-    bottom: 3px;
+    bottom: -1px;
 }
 #toc.left {
-    left: 3px;
+    left: -1px;
 }
 #toc.right {
-    right: 3px;
+    right: -1px;
 }
 #toc {
     position: absolute;
     width: 260px;
     background: white;
-    box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;
+    /*box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;*/
 }
 
 .tocposition {
@@ -182,8 +214,10 @@ export default {
 .tocposition a:hover {
     opacity: 0.8;
 }
-.tocposition .material-icons {
-    font-size: 14px;
+.tocposition .icon {
+    width: 14px;
+    height: 14px;
+    fill: #ccc;
 }
 
 .title, .description, .legend, .metricboxes {
@@ -192,7 +226,7 @@ export default {
 }
 
 .metricboxes {
-    padding: 10px 0 10px;
+    padding: 3px 0 10px;
     text-align: center;
     display: flex;
     flex-flow: row nowrap;
@@ -215,7 +249,13 @@ export default {
 .metricvalue {
     margin-top: 0;
     font-weight: bold;
-    font-size: 19px !important;
+    font-size: 16px !important;
+}
+.metricvalue.metricraw {
+    font-size: 13px !important;
+}
+.metriclabel {
+    line-height: 1.3em;
 }
 
 .title {
@@ -226,8 +266,9 @@ export default {
 }
 
 .description {
-    padding: 0px 10px 10px;
-    font-size: 11px;
+    padding: 3px 10px 2px;
+    font-size: 12px;
+    text-align: center;
 }
 
 h1, h2 {
@@ -248,7 +289,7 @@ svg {
     width: 100%;
     height: auto;
     max-height: 41px;
-    pointer-events: none; /* fix for ie11 click making legend disappear */
+    /*pointer-events: none;*/ /* fix for ie11 click making legend disappear */
 }
 
 .legendText {
@@ -275,10 +316,6 @@ svg {
     display: none;
 }
 
-.content-editable {
-     outline: none;
-}
-
 @media print{
     .background-print-img{
         display: block;
@@ -294,6 +331,11 @@ svg {
 }
 
 @media all and (max-width: 480px) {
-
+    .metric-raw {
+        display: none !important;
+    }
+    #toc {
+        width: 200px;
+    }
 }
 </style>
