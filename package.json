@@ -21,6 +21,7 @@
     "babelify": "^7.3.0",
     "browser-sync": "^2.12.10",
     "browserify": "^13.0.1",
+    "d3-scale": "^1.0.7",
     "del": "^2.2.0",
     "es6-promise": "^3.2.1",
     "gulp": "^3.9.1",
@@ -61,14 +62,30 @@
     },
     "plugins": [],
     "rules": {
-      "indent": [2, 4],
-      "linebreak-style": [2, "unix"],
-      "quotes": [0, "single"],
-      "semi": [2, "always"]
+      "indent": [
+        2,
+        4
+      ],
+      "linebreak-style": [
+        2,
+        "unix"
+      ],
+      "quotes": [
+        0,
+        "single"
+      ],
+      "semi": [
+        2,
+        "always"
+      ]
     }
   },
   "babel": {
-    "presets": ["es2015"],
-    "plugins": ["transform-runtime"]
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-runtime"
+    ]
   }
 }

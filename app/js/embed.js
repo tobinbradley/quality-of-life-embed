@@ -82,7 +82,8 @@ let appState = {
     selected: selected,
     year: year,
     metadata: null,
-    title: mapTitle
+    title: mapTitle,
+    highlight: []
 };
 
 // for debugging

@@ -2,7 +2,6 @@
     <div class="" style="position: relative; width: 100%; height: 100%">
         <div id="map"></div>
     </div>
-
 </template>
 
 <script>
@@ -11,11 +10,16 @@ import axios from 'axios';
 import geojsonDataMerge from '../modules/geojsondatamerge';
 import {prettyNumber} from '../modules/number_format';
 import getURLParameter from '../modules/geturlparams';
+import {scaleLinear} from 'd3-scale';
 
 export default {
     name: 'sc-map',
     watch: {
         'sharedState.selected': 'selectNeighborhoods',
+        'sharedState.breaks': 'updateBreaks',
+        'sharedState.year': 'updateYear',
+        'sharedState.selected': 'styleNeighborhoods',
+        'sharedState.highlight': 'styleNeighborhoods',
         'sharedState.breaks': 'updateBreaks',
         'sharedState.year': 'updateYear'
     },
@@ -32,59 +36,62 @@ export default {
 
             // disable map rotation using right click + drag and touch
             if (_this.privateState.pitch === false) {
-                map.dragRotate.disable();
+                //map.dragRotate.disable();
                 map.touchZoomRotate.disableRotation();
             }
 
             // after map initiated, grab geography and intiate/style neighborhoods
             map.on('load', function () {
                 axios.get('data/geography.geojson.json')
-                    .then(function(response) {
+                    .then(function(response) {                                              
                         _this.privateState.mapLoaded = true;
                         _this.privateState.geoJSON = response.data;
-
-                        // zoom to stuff;
-                        let bounds;
-                        let flyOptions = {padding: 50};
-                        if (_this.sharedState.selected.length === 0) {
-                            bounds = _this.getFullBounds();
-                        } else {
-                            bounds = _this.getSelectedBounds();
-                            if (_this.privateState.smaxzoom) {
-                                flyOptions.maxZoom = _this.privateState.smaxzoom;
-                            }
-                        }
-                        _this.privateState.map.fitBounds(bounds, flyOptions);
-
                         _this.initNeighborhoods();
-                        _this.selectNeighborhoods();
                         _this.styleNeighborhoods();
+                        _this.initMapEvents();
+                        
+                        if (_this.sharedState.selected.length > 0) {
+                            _this.zoomNeighborhoods();
+                        }
                     });
             });
-
-            map.on('rotate', function(e) {
-                if (map.getPitch() > 25) {
-                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'visible');
-                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'visible');
-                } else {
-                    map.setLayoutProperty('neighborhoods-fill-extrude', 'visibility', 'none');
-                    map.setLayoutProperty('neighborhoods-fill-selected', 'visibility', 'none');
-                }
-            });
+            
+                     
 
         },
-        togglePitch: function() {
+        initMapEvents: function() {
+            let map = this.privateState.map;
             let _this = this;
-            if (this.privateState.map.getPitch() === 0) {
-                this.privateState.map.easeTo({pitch: 75, bearing: -40, zoom: 10});
+            
+            map.on('rotate', function(e) {
+                if (map.getPitch() >= 20) {
+                    _this.toggle3D();
+                } else {
+                    _this.toggle3D();
+                }
+            });   
+        },
+        toggle3D: function() {
+            let _this = this;
+            let map = _this.privateState.map;
+            let pitched;
+            
+            map.getPitch() >= 20 ? pitched = true: pitched = false;
+            
+            if (pitched) {
+                map.setLayoutProperty('neighborhoods', 'visibility', 'none');
+                map.moveLayer('neighborhoods-fill-extrude');
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', _this.getHeight());
             } else {
-                this.privateState.map.easeTo({pitch: 0, bearing: 0});
+                map.setLayoutProperty('neighborhoods', 'visibility', 'visible');
+                map.moveLayer('neighborhoods-fill-extrude', 'building');
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', 0);
             }
         },
         initNeighborhoods: function() {
             let map = this.privateState.map;
             let _this = this;
-            let geoJSON =  _this.geoJSONMerge();
+            let geoJSON =  _this.privateState.geoJSON;
 
             map.addSource('neighborhoods', {
                 type: 'geojson',
@@ -93,87 +100,40 @@ export default {
 
             // neighborhood boundaries
             map.addLayer({
-                'id': 'neighborhoods-line',
+                'id': 'neighborhoods',
                 'type': 'line',
                 'source': 'neighborhoods',
                 'layout': {},
-                'paint': {
-                    'line-color': '#666',
-                    'line-width': 0.8
-                }
-            }, 'building');
-
-            // neighborhood boundaries highlight
-            map.addLayer({
-                'id': 'neighborhoods-line-selected',
-                'type': 'line',
-                'source': 'neighborhoods',
-                'layout': {},
-                "filter": ["in", "id", "-999999"],
-                'paint': {
-                    'line-color': '#ba00e4',
-                    'line-width': {
-                        "base": 2,
-                        "stops": [
-                            [
-                                7,
-                                2
-                            ],
-                            [
-                                13,
-                                5
-                            ],
-                            [
-                                16,
-                                8
-                            ]
-                        ]
-                    }
-                }
-            }, 'water_label');
-            map.addLayer({
-                'id': 'neighborhoods-fill-selected',
-                'type': 'fill-extrusion',
-                'source': 'neighborhoods',
-                'layout': {
-                    'visibility': 'none'
-                },
-                "filter": ["in", "id", "-999999"],
-                'paint': {
-                    'fill-extrusion-color': '#ba00e4',
-                    'fill-extrusion-opacity': 0.7,
-                    'fill-extrusion-height': {
-                        'type': 'identity',
-                        'property': 'height'
-                    }
-                }
-            }, 'water_label');
-
-            map.addLayer({
-                'id': 'neighborhoods-fill',
-                'type': 'fill',
-                'source': 'neighborhoods',
-                'filter': ['!=', 'choropleth', 'null'],
-                'paint': {
-                }
-            }, 'neighborhoods-line');
+                'paint': {}
+            }, 'place_other');
 
             map.addLayer({
                 'id': 'neighborhoods-fill-extrude',
                 'type': 'fill-extrusion',
                 'source': 'neighborhoods',
-                'layout': {
-                    'visibility': 'none'
-                },
-                'filter': ['!=', 'choropleth', 'null'],
+                //'filter': ['!=', 'choropleth', 'null'],
                 'paint': {
-                    'fill-extrusion-opacity': 0.8,
-                    'fill-extrusion-height': {
-                        'type': 'identity',
-                        'property': 'height'
-                    }
+                    'fill-extrusion-opacity': 1
                 }
-            }, 'neighborhoods-fill-selected');
+            }, 'building');
+
+            // markers layer
+             map.addSource("markers", {
+                 "type": "geojson",
+                 "data": {
+                     "type": "FeatureCollection",
+                     "features": []
+                 }
+             });
+             map.addLayer({
+                 "id": "markers",
+                 "type": "symbol",
+                 "source": "markers",
+                 "layout": {
+                     "icon-image": "star-11",
+                     "icon-size": 1.7
+                 }
+            });
 
         },
         selectNeighborhoods: function() {
@@ -202,30 +162,19 @@ export default {
             }
         },
         styleNeighborhoods: function() {
-                let map = this.privateState.map;
-                let breaks = this.sharedState.breaks;
-                let colors = this.sharedState.colors;
+            let map = this.privateState.map;
+            let _this = this;
 
-                let fillColor = {
-                    property: 'choropleth',
-                    stops: [
-                        [breaks[1], colors[0]],
-                        [breaks[2], colors[1]],
-                        [breaks[3], colors[2]],
-                        [breaks[4], colors[3]],
-                        [breaks[5], colors[4]]
-                    ]
-                };
-                map.setPaintProperty("neighborhoods-fill", 'fill-color', fillColor);
-                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', fillColor);
+            map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-color', _this.getColors());
+            map.setPaintProperty("neighborhoods", 'line-color', _this.getOutlineColor());
+            map.setPaintProperty("neighborhoods", 'line-width', _this.getOutlineWidth());
+            if (_this.privateState.isPitched3D) {
+                map.setPaintProperty("neighborhoods-fill-extrude", 'fill-extrusion-height', _this.getHeight());
+            }
         },
         updateChoropleth: function() {
             let _this = this;
             if (this.privateState.mapLoaded) {
-                let geoJSON =  _this.geoJSONMerge();
-
-                this.privateState.map.getSource('neighborhoods').setData(geoJSON);
-
                 this.styleNeighborhoods();
             }
         },
@@ -256,8 +205,8 @@ export default {
             });
 
             return bounds;
-        },
-        getSelectedBounds: function() {
+        },        
+        zoomNeighborhoods: function () {
             let bounds = new mapboxgl.LngLatBounds();
             let _this = this;
 
@@ -271,7 +220,120 @@ export default {
                 }
             });
 
-            return bounds;
+            this.privateState.map.fitBounds(bounds, {padding: 100});
+        },
+        getOutlineColor: function() {
+            const stops = [];
+            let _this = this;
+
+            _this.sharedState.selected.forEach(id => {
+                stops.push([id, '#ba00e4']);
+            });
+
+            let outline = {
+                property: 'id',
+                default: 'rgba(0,0,0,1)',
+                type: 'categorical',
+                stops: stops
+            }
+
+            if (stops.length > 0) {
+                return outline;
+            } else {
+                return outline.default
+            }
+        },
+        getOutlineWidth: function() {
+            const stops = [];
+            let _this = this;
+
+            _this.sharedState.selected.forEach(id => {
+                stops.push([id, 4]);
+            });
+
+            let outlineSize = {
+                property: 'id',
+                default: 0.4,
+                type: 'categorical',
+                stops: stops
+            }
+
+            if (stops.length > 0) {
+                return outlineSize;
+            } else {
+                return outlineSize.default;
+            }
+
+            return stops;
+        },
+        getColors: function () {
+            const stops = [];
+            let _this = this;
+            let data = _this.sharedState.metric.data.map;
+            let breaks = this.sharedState.breaks;
+            let colors = this.sharedState.colors;
+
+            let color = function(val) {
+                if (val <= breaks[1]) {
+                    return colors[0];
+                } else if (val <= breaks[2]) {
+                    return colors[1];
+                }
+                 else if (val <= breaks[3]) {
+                    return colors[2];
+                }
+                 else if (val <= breaks[4]) {
+                    return colors[3];
+                }
+                 else if (val <= breaks[5]) {
+                    return colors[4];
+                }
+            };
+
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];
+
+                if (_this.sharedState.highlight.indexOf(id) !== -1) {
+                  stops.push([id, '#F7E55B']);
+                } else if (value !== null) {
+                    stops.push([id, color(value)]);
+                }
+            });
+
+            let fillColor = {
+                property: 'id',
+                default: 'rgb(242,243,240)',
+                type: 'categorical',
+                stops: stops
+            };
+
+            return fillColor;
+        },
+        getHeight: function() {
+            let _this = this;
+            const stops = [];
+            let data = _this.sharedState.metric.data.map;
+
+            let heightAdjust = scaleLinear()
+                    .domain([_this.sharedState.breaks[0], _this.sharedState.breaks[this.sharedState.breaks.length - 1]])
+                    .range([0, 3000]);
+
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];
+                if (value !== null) {
+                    stops.push([id, heightAdjust(value)]);
+                }
+            });
+
+            let height = {
+                property: 'id',
+                default: 0,
+                type: 'categorical',
+                stops: stops
+            }
+
+
+            return height;
         }
     },
     mounted: function () {
