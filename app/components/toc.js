@@ -1,4 +1,20 @@
-<template lang="html">
+import {
+    abbrNum,
+    round,
+    prettyNumber
+} from '../js/number_format';
+import {
+    metaDescription
+} from '../js/meta';
+import isNumeric from '../js/isnumeric';
+import {
+    calcValue,
+    wValsToArray,
+    sum
+} from '../js/metric_calculations';
+
+
+let template = `
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
@@ -63,16 +79,13 @@
             </div>
         </div>
     </div>
-</template>
+`;
 
-<script>
-import {abbrNum, round, prettyNumber} from '../modules/number_format';
-import {metaDescription} from '../modules/meta';
-import isNumeric from '../modules/isnumeric';
-import {calcValue, wValsToArray, sum} from '../modules/metric_calculations';
+
 
 export default {
     name: 'sc-toc',
+    template: template,
     watch: {
         'sharedState.metric': 'processData',
         'sharedState.metadata': 'getMetaDesc',
@@ -80,35 +93,35 @@ export default {
         'sharedState.year': 'processYear'
     },
     methods: {
-      highlight: function(n) {
-        if (n === -1) {
-          this.sharedState.highlight = [];
-        } else {
-          this.sharedState.highlight = this.getBreakIds(n);
-        }
-      },
-      selectBreak: function(n) {
-        this.sharedState.selected = this.getBreakIds(n);
-      },
-      getBreakIds: function(n) {
-        let _this = this;
-        let data = _this.sharedState.metric.data.map;
-        let breaks = _this.sharedState.breaks;
-        let ids = [];
+        highlight: function (n) {
+            if (n === -1) {
+                this.sharedState.highlight = [];
+            } else {
+                this.sharedState.highlight = this.getBreakIds(n);
+            }
+        },
+        selectBreak: function (n) {
+            //this.sharedState.selected = this.getBreakIds(n);
+        },
+        getBreakIds: function (n) {
+            let _this = this;
+            let data = _this.sharedState.metric.data.map;
+            let breaks = _this.sharedState.breaks;
+            let ids = [];
 
-        // loop through data to get id's
-        Object.keys(data).forEach(id => {
-          const value = data[id][`y_${_this.sharedState.year}`];
+            // loop through data to get id's
+            Object.keys(data).forEach(id => {
+                const value = data[id][`y_${_this.sharedState.year}`];
 
-          if (value !== null && value >= breaks[n] && value <= breaks[n + 1]) {
-            ids.push(id.toString());
-          }
-        });
+                if (value !== null && value >= breaks[n] && value <= breaks[n + 1]) {
+                    ids.push(id.toString());
+                }
+            });
 
-        return ids;
-      },
+            return ids;
+        },
 
-      abbrNumber: function (value) {
+        abbrNumber: function (value) {
             let num = abbrNum(value, 1);
             if (isNumeric(num)) {
                 return round(num, this.sharedState.metric.config.decimals);
@@ -116,14 +129,14 @@ export default {
                 return num;
             }
         },
-        getMetaDesc: function() {
-            this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>','').trim();
+        getMetaDesc: function () {
+            this.privateState.metaDesc = metaDescription(this.sharedState.metadata).replace('<p>', '').replace('</p>', '').trim();
         },
-        processData: function() {
+        processData: function () {
             this.processArea();
             this.processSelected();
         },
-        processSelected: function() {
+        processSelected: function () {
             let metric = this.sharedState.metric;
 
             let selectedValue = calcValue(metric.data, metric.config.type, this.sharedState.year, this.sharedState.selected);
@@ -134,7 +147,7 @@ export default {
                 this.privateState.selectedRaw = prettyNumber(rawValue, 0);
             }
         },
-        processArea: function() {
+        processArea: function () {
             let metric = this.sharedState.metric;
             let keys = Object.keys(metric.data.map);
             if (metric.config.world_val && metric.config.world_val[`y_${this.sharedState.year}`]) {
@@ -149,11 +162,11 @@ export default {
                 this.privateState.areaRaw = prettyNumber(rawValue, 0);
             }
         },
-        processYear: function() {
+        processYear: function () {
             this.processArea();
             this.processSelected();
         },
-        position: function() {
+        position: function () {
             let el = document.querySelector("#toc");
 
             // move to top left from bottom right
@@ -177,165 +190,3 @@ export default {
         }
     }
 }
-</script>
-
-<style lang="css" scoped>
-#toc.top {
-    top: -1px;
-}
-#toc.bottom {
-    bottom: -1px;
-}
-#toc.left {
-    left: -1px;
-}
-#toc.right {
-    right: -1px;
-}
-#toc {
-    position: absolute;
-    width: 260px;
-    background: white;
-    /*box-shadow: 0 1px 3px #666, 0 6px 5px -5px #666;*/
-}
-
-.tocposition {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 0.8em;
-    z-index: 20;
-}
-.tocposition a {
-    color: #333;
-    opacity: 0.2;
-    transition: opacity 0.5s;
-}
-.tocposition a:hover {
-    opacity: 0.8;
-}
-.tocposition .icon {
-    width: 14px;
-    height: 14px;
-    fill: #ccc;
-}
-
-.title, .description, .legend, .metricboxes {
-  position: relative;
-  z-index: 10;
-}
-
-.metricboxes {
-    padding: 3px 0 10px;
-    text-align: center;
-    display: flex;
-    flex-flow: row nowrap;
-}
-.metricbox {
-    width: 50%;
-    padding: 0 10px;
-    margin: 0 auto;
-
-}
-.metricbox span {
-    display: block;
-    font-size: 12px;
-}
-.metrictype {
-    font-weight: bold;
-    font-size: 12px;
-    color: #727272;
-}
-.metricvalue {
-    margin-top: 0;
-    font-weight: bold;
-    font-size: 16px !important;
-}
-.metricvalue.metricraw {
-    font-size: 13px !important;
-}
-.metriclabel {
-    line-height: 1.3em;
-}
-
-.title {
-  padding: 10px 10px 7px;
-  border-bottom: 1px solid rgba(0,0,0,0.15);
-  word-wrap: break-word;
-  font-size: 15px;
-}
-
-.description {
-    padding: 3px 10px 2px;
-    font-size: 12px;
-    text-align: center;
-}
-
-h1, h2 {
-    margin: 0;
-    line-height: normal;
-}
-h1 {
-    font-weight: bold;
-    line-height: 20px;
-}
-
-h2 {
-    font-weight: normal;
-}
-
-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 41px;
-    /*pointer-events: none;*/ /* fix for ie11 click making legend disappear */
-}
-
-.legendText {
-    font-family:'Roboto', sans-serif;
-    font-size: 10px;
-    letter-spacing:0px;
-    line-height:100%;
-    stroke-width:1px;
-    text-align:center;
-    text-anchor:middle;
-    word-spacing:0px;
-}
-
-.legendText:first-of-type {
-    text-align:start;
-    text-anchor:start;
-}
-.legendText:last-of-type {
-    text-align:end;
-    text-anchor:end;
-}
-
-.background-print-img{
-    display: none;
-}
-
-@media print{
-    .background-print-img{
-        display: block;
-        width:100%;
-        height: 99%;
-        position:absolute;
-        left: 0;
-        top: 0;
-    }
-    .tocposition {
-        display: none;
-    }
-}
-
-@media all and (max-width: 480px) {
-    .metric-raw {
-        display: none !important;
-    }
-    #toc {
-        width: 200px;
-    }
-}
-</style>

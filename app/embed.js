@@ -10,20 +10,17 @@ ____________________________________
                ||     ||
 */
 
-require('es6-promise').polyfill();  // fix for Axois on IE11
-import getURLParameter from './modules/geturlparams';
-import fetchData from './modules/fetch';
-import dataConfig from '../../data/config/data';
-import mapConfig from '../../data/config/map';
-import siteConfig from '../../data/config/site';
-import colors from './modules/breaks';
-import webglCheck from './modules/webglcheck';
-import Vue from 'vue';
-import ToC from './components/toc.vue';
-import MapGL from './components/map.vue';
-
-
-webglCheck();  // Make sure WebGL is in da house
+require('es6-promise').polyfill(); // fix for Axois on IE11
+import getURLParameter from './js/geturlparams';
+import fetchData from './js/fetch';
+import dataConfig from '../data/config/data';
+import mapConfig from '../data/config/map';
+import siteConfig from '../data/config/site';
+import colors from './js/breaks';
+import Vue from 'vue/dist/vue.js';
+import ToC from './components/toc';
+import MapGL from './components/map';
+import mapStyle from './styles/positron-mecklenburg.json';
 
 // Get URL arguments if passed
 //     m   metric number
@@ -90,18 +87,22 @@ let appState = {
 window.appState = appState;
 
 // parent/iframe communications
-window.onmessage = function(e){
+window.onmessage = function (e) {
     if (e.data.title) {
         appState.title = e.data.title;
     }
     if (e.data.metric) {
         appState.title = dataConfig[`m${e.data.metric}`].title;
         fetchData(appState, e.data.metric);
-        parent.postMessage({"maptitle": appState.title}, "*");
+        parent.postMessage({
+            "maptitle": appState.title
+        }, "*");
     }
 };
-if (window!=window.top) {
-    parent.postMessage({"maptitle": mapTitle}, "*");
+if (window != window.top) {
+    parent.postMessage({
+        "maptitle": mapTitle
+    }, "*");
 }
 
 
@@ -109,7 +110,7 @@ if (window!=window.top) {
 fetchData(appState, metricId);
 
 // set up vue components
-ToC.data = function() {
+ToC.data = function () {
     return {
         sharedState: appState,
         privateState: {
@@ -123,14 +124,14 @@ ToC.data = function() {
     };
 };
 
-MapGL.data = function() {
+MapGL.data = function () {
     return {
         sharedState: appState,
         privateState: {
             locate: null,
             mapOptions: {
                 container: 'map',
-                style: mapConfig.style,                
+                style: mapStyle,
                 attributionControl: false,
                 zoom: mapConfig.zoomEmbed,
                 center: mapConfig.centerEmbed,

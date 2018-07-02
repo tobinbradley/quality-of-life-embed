@@ -11,3 +11,5 @@ TODO.md
 yarn.lock
 package-lock.json
 .vscode
+.cache
+.dist

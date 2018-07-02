@@ -1,6 +1,6 @@
 import {calcValue} from './metric_calculations';
 import {prettyNumber} from './number_format';
-import selectGroups from '../../../data/config/selectgroups';
+import selectGroups from '../../data/config/selectgroups';
 
 function dataSummary(appState) {
     let summary = {

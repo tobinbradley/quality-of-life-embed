@@ -1,91 +1,33 @@
 {
-  "name": "app-template",
+  "name": "qol-embed",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp",
-    "datagen": "gulp datagen",
-    "build": "gulp build --type=production"
+    "start": "parcel app/embed.hbs --no-cache --port 3000",
+    "build": "parcel build app/embed.hbs --public-url ./ --experimental-scope-hoisting && node ./build/datagen.js",
+    "prebuild": "rm -rf dist"
   },
   "author": "Tobin Bradley",
   "license": "MIT",
   "dependencies": {
-    "autoprefixer": "^6.4.1",
-    "axios": "^0.12.0",
-    "babel-core": "^6.10.4",
-    "babel-plugin-transform-runtime": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-register": "^6.9.0",
-    "babelify": "^7.3.0",
-    "browser-sync": "^2.12.10",
-    "browserify": "^13.0.1",
-    "d3-scale": "^1.0.7",
-    "del": "^2.2.0",
-    "es6-promise": "^3.2.1",
-    "gulp": "^3.9.1",
-    "gulp-convert": "^0.2.0",
-    "gulp-cssnano": "^2.1.2",
-    "gulp-imagemin": "^3.0.1",
-    "gulp-markdown": "^1.2.0",
-    "gulp-postcss": "^6.1.1",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.5.3",
-    "gulp-util": "^3.0.7",
-    "handlebars": "^4.0.5",
-    "lodash": "^4.13.1",
-    "mapbox-gl": "^0.43.0",
-    "material-design-lite": "^1.2.1",
-    "mkdir": "0.0.2",
-    "normalize.css": "^4.1.1",
-    "postcss-import": "^8.1.2",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "vue": "^2.4.2",
-    "vue-template-compiler": "^2.4.2",
-    "vueify": "^9.4.1"
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "d3-scale": "^2.1.0",
+    "es6-promise": "^4.2.4",
+    "mapbox-gl": "^0.46.0",
+    "normalize.css": "^8.0.0",
+    "promise-polyfill": "^8.0.0",
+    "vue": "^2.5.16"
   },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "node": true,
-      "es6": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "experimentalObjectRestSpread": true,
-        "jsx": true
-      }
-    },
-    "plugins": [],
-    "rules": {
-      "indent": [
-        2,
-        4
-      ],
-      "linebreak-style": [
-        2,
-        "unix"
-      ],
-      "quotes": [
-        0,
-        "single"
-      ],
-      "semi": [
-        2,
-        "always"
-      ]
-    }
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ],
-    "plugins": [
-      "transform-runtime"
-    ]
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "csvtojson": "^2.0.4",
+    "lodash": "^4.17.10",
+    "marked": "^0.4.0",
+    "parcel-bundler": "^1.9.4",
+    "parcel-plugin-handlebars": "^0.4.4",
+    "postcss-import": "^11.1.0",
+    "postcss-preset-env": "^5.2.1",
+    "shelljs": "^0.8.2"
   }
 }
