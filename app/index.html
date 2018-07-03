@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Exploring neighborhood character, economics, education, engagement, environment, health, housing, safety and transportation.">
+    <meta name="keywords" content="'GIS,Mecklenburg County,parks,libraries,schools,environment,impervious surface,floodplain,zoning,assessment,tax,photos,government">
+    <meta name="author" content="Tobin Bradley">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Quality of Life Explorer</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="img/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Quality of Life Explorer">
+    <link rel="apple-touch-icon-precomposed" href="img/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="img/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <!-- Fonts and CSS -->
+    <style>
+        @page {
+            size: 8.5in 11in;
+            margin: 0.75in;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            color: #555;
+            font-family: "Helvetica Neue", "Calibri", "Liberation Sans", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0.02em;
+        }
+
+        body {
+            background: #ccc;
+        }
+
+
+        header {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 3px #666, 0 10px 6px -6px #666;
+        }
+
+        .container {
+            width: 6.9in;
+            margin: 0 auto;
+        }
+
+        .embed {
+            height: 9.4in;
+            box-shadow: 0 0 3px #666, 0 15px 12px -10px #666;
+            margin: 20px 0;
+        }
+
+        .embed iframe {
+            overflow: hidden;
+            border: none;
+        }
+
+
+        .print {
+            display: inline-block;
+            width: 17%;
+            padding: 0 20px;
+        }
+
+        .form {
+            display: inline-block;
+            width: 83%;
+            float: right;
+            padding: 0 20px;
+            border-left: 1px solid #ccc;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            padding: 5px 10px;
+            font-size: 1em;
+            border: 1px solid #a2a2a2;
+        }
+
+        input,
+        select {
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-size: 0.9em;
+            color: #3f51b5;
+        }
+
+        /* Button */
+
+        .button {
+            background-color: #CBCDCB;
+            /* Green */
+            border: none;
+            color: #555;
+            padding: 7px 12px 5px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 6px;
+            box-shadow: 1px 1px 3px #666;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        #mapembed {
+            font-size: 0.7em;
+        }
+
+
+        @media print {
+            header {
+                display: none;
+            }
+            .embed {
+                margin: 0;
+                box-shadow: none;
+                border: 1px solid black;
+                padding: 10px;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <label for="maptitle">Title</label>
+                <input type="text" id="maptitle" name="maptitle" oninput="titleChange(this.value)" maxlength="150" aria-label="map title">
+                <button class="button" onclick="window.print();">PRINT</button>
+            </div>
+        </header>
+        <div class="embed">
+            <iframe src="" width="100%" height="100%" title="map"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function getURLParameter(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results || !results[2]) return null;
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // set defaults
+        let s = [];
+        let m = '';
+        let y = 2015;
+        let t = '';
+
+
+        // Get URL arguments if passed
+        //     m   metric number
+        //     y   year
+        //     s   selected
+        //     t   map title
+        m = '1';
+        if (getURLParameter("m")) {
+            let passedMetric = getURLParameter("m").replace('m', '');
+            m = passedMetric;
+        }
+        if (getURLParameter('y') !== null) {
+            y = getURLParameter('y');
+        }
+        if (getURLParameter('s') !== null) {
+            s = getURLParameter('s').split(",");
+        }
+        if (getURLParameter('t') !== null) {
+            t = getURLParameter('t');
+        }
+
+        // set iframe src
+        document.querySelector('.embed iframe').src = setURL(m, y, s, t);
+
+        // set embed source
+        //document.querySelector('#mapembed').value =
+        //    `<iframe src="https://mcmap.org/qol-embed/embed.html?m=${m}&y=${y}&s=${s.join(',')}&t=${encodeURI(t)}&tocp=true&pitch=false" style="width: 500px; height: 500px; border: 1px solid #ccc;" title="map"></iframe>`;
+
+        // URL for the iframe
+        function setURL(m, y, s, t) {
+            let url =
+                `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&s=${s}&t=${encodeURI(t)}&tocp=true&pitch=false`;
+            return url;
+        }
+
+        // parent/iframe communications
+        window.titleChange = function (title) {
+            document.querySelector("iframe").contentWindow.postMessage({
+                "title": title
+            }, '*');
+            //document.querySelector('#mapembed').value =
+            //    `<iframe src="https://mcmap.org/embed.html?m=${m}&y=${y}&s=${s.join(',')}&t=${encodeURI(title)}&tocp=true&pitch=false" style="width: 500px; height: 500px; border: 1px solid #ccc;" title="map"></iframe>`;
+        };
+        window.onmessage = function (e) {
+            let data = e.data;
+            if (data.maptitle) {
+                t = data.maptitle;
+                document.querySelector("#maptitle").value = t;
+            }
+        };
+    </script>
+
+    <!--   Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-48797957-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+</body>
+
+</html>

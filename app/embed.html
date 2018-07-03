@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="{{ siteConfig.description }}">
-    <meta name="keywords" content="{{ siteConfig.keywords }}">
-    <meta name="author" content="{{ siteConfig.author }}">
+    <meta name="description" content="Exploring neighborhood character, economics, education, engagement, environment, health, housing, safety and transportation.">
+    <meta name="keywords" content="GIS,Mecklenburg County,parks,libraries,schools,environment,impervious surface,floodplain,zoning,assessment,tax,photos,government">
+    <meta name="author" content="Tobin Bradley">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>{{ siteConfig.title }}</title>
+    <title>Quality of Life Explorer</title>
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="{{ siteConfig.title }}">
+    <meta name="apple-mobile-web-app-title" content="Quality of Life Explorer">
     <link rel="apple-touch-icon-precomposed" href="img/ios-desktop.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -38,8 +38,9 @@
         <sc-map></sc-map>
 
         <!-- attribution -->
-        <span class="attribution">{{siteConfig.title}}{{#if siteConfig.qoldashboardURL}} &bull;
-            <a href="{{siteConfig.qoldashboardURL}}" target="_blank">{{fancyURL siteConfig.qoldashboardURL}}</a>{{/if}}</span>
+        <span class="attribution">Quality of Life Explorer &bull;
+            <a href="https://mcmap.org/qol/" target="_blank">mcmap.org/qol</a>
+        </span>
 
         <!-- toc -->
         <sc-toc></sc-toc>
@@ -66,7 +67,7 @@
             m.parentNode.insertBefore(a, m)
         })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-        ga('create', '{{ siteConfig.gaKey }}', 'auto');
+        ga('create', 'UA-48797957-1', 'auto');
         ga('send', 'pageview');
     </script>
 </body>

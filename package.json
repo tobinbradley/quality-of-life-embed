@@ -4,14 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel app/embed.hbs --no-cache --port 3000",
-    "build": "parcel build app/embed.hbs --public-url ./ --experimental-scope-hoisting && node ./build/datagen.js",
-    "prebuild": "rm -rf dist"
+    "start": "parcel app/embed.html --port 3000",
+    "build": "parcel build app/embed.html --public-url ./ --experimental-scope-hoisting",
+    "prebuild": "shx rm -rf dist && node ./build/datagen.js && shx cp -f app/index.html dist/index.html"
   },
   "author": "Tobin Bradley",
   "license": "MIT",
   "dependencies": {
-    "babel-plugin-transform-runtime": "^6.23.0",
     "d3-scale": "^2.1.0",
     "es6-promise": "^4.2.4",
     "mapbox-gl": "^0.46.0",
@@ -25,9 +24,9 @@
     "lodash": "^4.17.10",
     "marked": "^0.4.0",
     "parcel-bundler": "^1.9.4",
-    "parcel-plugin-handlebars": "^0.4.4",
     "postcss-import": "^11.1.0",
     "postcss-preset-env": "^5.2.1",
-    "shelljs": "^0.8.2"
+    "shelljs": "^0.8.2",
+    "shx": "^0.3.1"
   }
 }
