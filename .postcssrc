@@ -1,6 +1,11 @@
 {
   "plugins": {
     "postcss-import": {},
-    "postcss-preset-env": { "warnForDuplicates": false }
+    "postcss-preset-env": { 
+      "warnForDuplicates": false,stage: 3,
+      features: {
+        "nesting-rules": true
+      } 
+    }
   }
 }

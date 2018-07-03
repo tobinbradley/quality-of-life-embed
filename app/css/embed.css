@@ -9,10 +9,6 @@ ____________________________________
                ||     ||
 */
 
-/*@import '../../node_modules/normalize.css/normalize.css';*/
-
-/* @import '../../node_modules/material-design-lite/material.css'; */
-
 @import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 @import './modules/toc.css';
 * {
