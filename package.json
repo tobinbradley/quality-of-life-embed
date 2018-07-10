@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel app/embed.html --port 3000",
+    "start": "parcel app/embed.html --port 3000 --open",
     "build": "parcel build app/embed.html --public-url ./ --experimental-scope-hoisting",
     "prebuild": "shx rm -rf dist && node ./build/datagen.js && shx cp -f app/index.html dist/index.html"
   },
@@ -12,14 +12,11 @@
   "license": "MIT",
   "dependencies": {
     "d3-scale": "^2.1.0",
-    "es6-promise": "^4.2.4",
     "mapbox-gl": "^0.46.0",
     "normalize.css": "^8.0.0",
-    "promise-polyfill": "^8.0.0",
     "vue": "^2.5.16"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.7.0",
     "csvtojson": "^2.0.4",
     "lodash": "^4.17.10",
     "marked": "^0.4.0",

@@ -1,5 +1,4 @@
-// mapbox-gl has issues building with both parcel and webpack, using CDN version
-//import mapboxgl from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import geojsonDataMerge from '../js/geojsondatamerge';
 import {
   prettyNumber
