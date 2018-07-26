@@ -1,20 +1,4 @@
-import {
-    abbrNum,
-    round,
-    prettyNumber
-} from '../js/number_format';
-import {
-    metaDescription
-} from '../js/meta';
-import isNumeric from '../js/isnumeric';
-import {
-    calcValue,
-    wValsToArray,
-    sum
-} from '../js/metric_calculations';
-
-
-let template = `
+<template>
     <div id="toc" v-if="sharedState.metric.config" class="top left">
         <div>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" class="background-print-img" alt="white background for printing">
@@ -79,13 +63,26 @@ let template = `
             </div>
         </div>
     </div>
-`;
+</template>
 
-
+<script>
+import {
+    abbrNum,
+    round,
+    prettyNumber
+} from '../js/number_format';
+import {
+    metaDescription
+} from '../js/meta';
+import isNumeric from '../js/isnumeric';
+import {
+    calcValue,
+    wValsToArray,
+    sum
+} from '../js/metric_calculations';
 
 export default {
     name: 'sc-toc',
-    template: template,
     watch: {
         'sharedState.metric': 'processData',
         'sharedState.metadata': 'getMetaDesc',
@@ -190,3 +187,4 @@ export default {
         }
     }
 }
+</script>

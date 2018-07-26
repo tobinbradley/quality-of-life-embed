@@ -4,44 +4,34 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Exploring neighborhood character, economics, education, engagement, environment, health, housing, safety and transportation.">
-    <meta name="keywords" content="GIS,Mecklenburg County,parks,libraries,schools,environment,impervious surface,floodplain,zoning,assessment,tax,photos,government">
-    <meta name="author" content="Tobin Bradley">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Quality of Life Explorer</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="<%= VUE_APP_description %>">
+    <meta name="keywords" content="<%= VUE_APP_keywords %>">
+    <meta name="author" content="<%= VUE_APP_author %>">
+    <title>
+        <%= VUE_APP_title %>
+    </title>
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="img/android-desktop.png">
+    <link rel="icon" sizes="192x192" href="img/icons/android-chrome-192x192.png">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Quality of Life Explorer">
-    <link rel="apple-touch-icon-precomposed" href="img/ios-desktop.png">
+    <link rel="apple-touch-icon-precomposed" href="img/icons/apple-touch-icon-152x152.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="img/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png">
     <meta name="msapplication-TileColor" content="#3372DF">
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="img/favicon.png">
+    <link rel="shortcut icon" href="img/icons/favicon-32x32.png">
 
-    <!-- Fonts and CSS -->
-    <link rel="stylesheet" href="css/embed.css">
-
-    <!-- JS -->
     <script>
-        this.Reflect || document.write(
-            '<script src="https://unpkg.com/core-js-bundle"><\x2fscript>'
-        );
+        window.fetch || document.write('<script src="https://unpkg.com/whatwg-fetch@1.0.0/fetch.js"><\/script>');
     </script>
-    <script>
-        this.fetch || document.write(
-            '<script src="https://unpkg.com/whatwg-fetch"><\x2fscript>');
-    </script>
-
-
 </head>
 
 <body>
@@ -59,9 +49,6 @@
 
     </div>
 
-
-    <!-- main js at bottom -->
-    <script src="embed.js"></script>
 
     <!--   Google Analytics -->
     <script>

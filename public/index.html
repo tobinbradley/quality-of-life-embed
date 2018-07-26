@@ -4,28 +4,30 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Exploring neighborhood character, economics, education, engagement, environment, health, housing, safety and transportation.">
-    <meta name="keywords" content="'GIS,Mecklenburg County,parks,libraries,schools,environment,impervious surface,floodplain,zoning,assessment,tax,photos,government">
-    <meta name="author" content="Tobin Bradley">
+    <meta name="description" content="<%= VUE_APP_description %>">
+    <meta name="keywords" content="<%= VUE_APP_keywords %>">
+    <meta name="author" content="<%= VUE_APP_author %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Quality of Life Explorer</title>
+    <title>
+        <%= VUE_APP_title %>
+    </title>
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="img/android-desktop.png">
+    <link rel="icon" sizes="192x192" href="img/icons/android-chrome-192x192.png">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Quality of Life Explorer">
-    <link rel="apple-touch-icon-precomposed" href="img/ios-desktop.png">
+    <link rel="apple-touch-icon-precomposed" href="img/icons/apple-touch-icon-152x152.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="img/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png">
     <meta name="msapplication-TileColor" content="#3372DF">
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="img/favicon.png">
+    <link rel="shortcut icon" href="img/icons/favicon-32x32.png">
 
     <!-- Fonts and CSS -->
     <style>
@@ -161,72 +163,7 @@
         </div>
     </div>
 
-    <script>
-        function getURLParameter(name, url = window.location.href) {
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results || !results[2]) return null;
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
 
-        // set defaults
-        let s = [];
-        let m = '';
-        let y = 2015;
-        let t = '';
-
-
-        // Get URL arguments if passed
-        //     m   metric number
-        //     y   year
-        //     s   selected
-        //     t   map title
-        m = '1';
-        if (getURLParameter("m")) {
-            let passedMetric = getURLParameter("m").replace('m', '');
-            m = passedMetric;
-        }
-        if (getURLParameter('y') !== null) {
-            y = getURLParameter('y');
-        }
-        if (getURLParameter('s') !== null) {
-            s = getURLParameter('s').split(",");
-        }
-        if (getURLParameter('t') !== null) {
-            t = getURLParameter('t');
-        }
-
-        // set iframe src
-        document.querySelector('.embed iframe').src = setURL(m, y, s, t);
-
-        // set embed source
-        //document.querySelector('#mapembed').value =
-        //    `<iframe src="https://mcmap.org/qol-embed/embed.html?m=${m}&y=${y}&s=${s.join(',')}&t=${encodeURI(t)}&tocp=true&pitch=false" style="width: 500px; height: 500px; border: 1px solid #ccc;" title="map"></iframe>`;
-
-        // URL for the iframe
-        function setURL(m, y, s, t) {
-            let url =
-                `${window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/embed.html'}?m=${m}&y=${y}&s=${s}&t=${encodeURI(t)}&tocp=true&pitch=false`;
-            return url;
-        }
-
-        // parent/iframe communications
-        window.titleChange = function (title) {
-            document.querySelector("iframe").contentWindow.postMessage({
-                "title": title
-            }, '*');
-            //document.querySelector('#mapembed').value =
-            //    `<iframe src="https://mcmap.org/embed.html?m=${m}&y=${y}&s=${s.join(',')}&t=${encodeURI(title)}&tocp=true&pitch=false" style="width: 500px; height: 500px; border: 1px solid #ccc;" title="map"></iframe>`;
-        };
-        window.onmessage = function (e) {
-            let data = e.data;
-            if (data.maptitle) {
-                t = data.maptitle;
-                document.querySelector("#maptitle").value = t;
-            }
-        };
-    </script>
 
     <!--   Google Analytics -->
     <script>
@@ -242,7 +179,7 @@
             m.parentNode.insertBefore(a, m)
         })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-        ga('create', 'UA-48797957-1', 'auto');
+        ga('create', '<%= VUE_APP_gaKey %>', 'auto');
         ga('send', 'pageview');
     </script>
 </body>

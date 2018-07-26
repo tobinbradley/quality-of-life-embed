@@ -4,12 +4,11 @@ node_modules
 bower_components
 data
 deploy.sh
-public
+public/data
 app/style/digiglobe
 npm-debug.log
 TODO.md
 yarn.lock
-package-lock.json
 .vscode
 .cache
 dist

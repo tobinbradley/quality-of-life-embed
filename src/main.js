@@ -10,16 +10,18 @@ ____________________________________
                ||     ||
 */
 
+import './css/embed.css';
 import getURLParameter from './js/geturlparams';
 import fetchData from './js/fetch';
 import dataConfig from '../data/config/data';
 import mapConfig from '../data/config/map';
 import siteConfig from '../data/config/site';
 import colors from './js/breaks';
-import Vue from 'vue/dist/vue.js';
-import ToC from './components/toc';
-import MapGL from './components/map';
+import Vue from 'vue';
+import ToC from './components/toc.vue';
+import MapGL from './components/map.vue';
 import mapStyle from './styles/positron-mecklenburg.json';
+
 
 // Get URL arguments if passed
 //     m   metric number
@@ -86,15 +88,14 @@ let appState = {
 window.appState = appState;
 
 // parent/iframe communications
-window.onmessage = function(e) {
+window.onmessage = function (e) {
   if (e.data.title) {
     appState.title = e.data.title;
   }
   if (e.data.metric) {
     appState.title = dataConfig[`m${e.data.metric}`].title;
     fetchData(appState, e.data.metric);
-    parent.postMessage(
-      {
+    parent.postMessage({
         maptitle: appState.title
       },
       '*'
@@ -102,8 +103,7 @@ window.onmessage = function(e) {
   }
 };
 if (window != window.top) {
-  parent.postMessage(
-    {
+  parent.postMessage({
       maptitle: mapTitle
     },
     '*'
@@ -114,7 +114,7 @@ if (window != window.top) {
 fetchData(appState, metricId);
 
 // set up vue components
-ToC.data = function() {
+ToC.data = function () {
   return {
     sharedState: appState,
     privateState: {
@@ -128,7 +128,7 @@ ToC.data = function() {
   };
 };
 
-MapGL.data = function() {
+MapGL.data = function () {
   return {
     sharedState: appState,
     privateState: {

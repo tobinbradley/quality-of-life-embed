@@ -1,3 +1,10 @@
+<template>
+  <div class="" style="position: relative; width: 100%; height: 100%">
+    <div id="map"></div>
+  </div>
+</template>
+
+<script>
 import mapboxgl from 'mapbox-gl';
 import geojsonDataMerge from '../js/geojsondatamerge';
 import {
@@ -7,17 +14,10 @@ import getURLParameter from '../js/geturlparams';
 import {
   scaleLinear
 } from 'd3-scale';
-import geog from "../data/geography.geojson.json";
-
-let template = `
-  <div class="" style="position: relative; width: 100%; height: 100%">
-    <div id="map"></div>
-  </div>
-`;
+import geog from '../data/geography.geojson.json';
 
 export default {
   name: 'sc-map',
-  template: template,
   watch: {
     'sharedState.selected': 'selectNeighborhoods',
     'sharedState.breaks': 'updateBreaks',
@@ -55,7 +55,6 @@ export default {
         if (_this.sharedState.selected.length > 0) {
           _this.zoomNeighborhoods();
         }
-
       });
     },
     initMapEvents: function () {
@@ -66,14 +65,12 @@ export default {
         closeOnClick: false
       });
 
-      map.on("mousemove", "neighborhoods-fill-extrude", function (e) {
+      map.on('mousemove', 'neighborhoods-fill-extrude', function (e) {
         map.getCanvas().style.cursor = 'pointer';
         let feature = e.features[0];
         let id = feature.properties.id;
         let data =
-          _this.sharedState.metric.data.map[id][
-            `y_${_this.sharedState.year}`
-          ];
+          _this.sharedState.metric.data.map[id][`y_${_this.sharedState.year}`];
         let val = prettyNumber(
           data,
           _this.sharedState.metric.config.decimals,
@@ -85,8 +82,8 @@ export default {
           .setLngLat(map.unproject(e.point))
           .setHTML(
             `<div style="text-align: center; margin: 0; padding: 0;"><h3 style="font-size: 1.2em; margin: 0; padding: 0; line-height: 1em; font-weight: bold;">NPA ${
-                feature.properties.id
-              }</h3>${val}</div>`
+              feature.properties.id
+            }</h3>${val}</div>`
           )
           .addTo(map);
       });
@@ -405,3 +402,4 @@ export default {
     this.initMap();
   }
 };
+</script>
