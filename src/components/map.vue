@@ -14,7 +14,7 @@ import getURLParameter from '../js/geturlparams';
 import {
   scaleLinear
 } from 'd3-scale';
-import geog from '../data/geography.geojson.json';
+import geog from '../../data/geography.geojson.json';
 
 export default {
   name: 'sc-map',
