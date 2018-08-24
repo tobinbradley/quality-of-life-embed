@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var dataConfig = require('../data/config/data.js');
+var dataConfig = require('../data/config/data.json');
 const csv = require('csvtojson');
 var dest = 'public/data/metric';
 var marked = require('marked');
